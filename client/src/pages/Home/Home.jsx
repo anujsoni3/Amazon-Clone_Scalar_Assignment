@@ -32,6 +32,17 @@ const Home = () => {
 
   if (loading) return <Loader fullPage />;
 
+  const getCategoryThemeImage = (slug) => {
+    switch(slug) {
+      case 'electronics': return "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=500&q=80";
+      case 'books': return "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500&q=80";
+      case 'clothing': return "https://images.unsplash.com/photo-1523381210434-271e8be1f528?w=500&q=80";
+      case 'beauty': return "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&q=80";
+      case 'home-kitchen': return "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=500&q=80";
+      default: return "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=500&q=80";
+    }
+  };
+
   return (
     <div className="home">
       <div className="hero-container">
@@ -47,6 +58,9 @@ const Home = () => {
           {categories.slice(0, 4).map(category => (
             <div key={category.id} className="category-card">
               <h2>{category.name}</h2>
+              <div className="category-card-image">
+                <img src={getCategoryThemeImage(category.slug)} alt={category.name} />
+              </div>
               <div className="category-card-inner">
                  <Link to={`/products?category=${category.slug}`} className="category-link">Shop now</Link>
               </div>

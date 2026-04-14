@@ -44,11 +44,23 @@
 
 .category-card h2 {
   font-size: 21px;
+  margin-bottom: 15px;
+}
+
+.category-card-image {
+  flex-grow: 1;
+  width: 100%;
   margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.category-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .category-card-inner {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;

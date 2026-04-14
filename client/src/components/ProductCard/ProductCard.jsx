@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import StarRating from '../StarRating/StarRating';
+import { useCart } from '../../context/CartContext';
 import './ProductCard.css';
 
 const ProductCard = ({ product }) => {
+  const { addItemToCart } = useCart();
   const imageUrl = product.images?.[0]?.imageUrl || 'https://via.placeholder.com/200';
   
   // Format price helper
@@ -39,6 +41,17 @@ const ProductCard = ({ product }) => {
         <div className="pc-delivery">
           <span>FREE Delivery</span>
         </div>
+        
+        <button 
+          className="btn pc-add-btn" 
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            addItemToCart(product.id, 1);
+          }}
+        >
+          Add to Cart
+        </button>
       </div>
     </div>
   );
