@@ -1,0 +1,227 @@
+.pd-page {
+  display: flex;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 20px;
+  gap: 30px;
+}
+
+/* Images */
+.pd-image-section {
+  display: flex;
+  width: 40%;
+  gap: 15px;
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
+}
+
+.pd-thumbnails {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 40px;
+}
+
+.pd-thumbnail {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 2px;
+  cursor: pointer;
+}
+
+.pd-thumbnail.active {
+  border: 1px solid var(--color-link-hover);
+  box-shadow: 0 0 3px var(--color-link-hover);
+}
+
+.pd-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.pd-main-image {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.pd-main-image img {
+  max-width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+}
+
+/* Info */
+.pd-info-section {
+  width: 40%;
+}
+
+.pd-title {
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.3;
+  margin-bottom: 5px;
+}
+
+.pd-rating {
+  margin-bottom: 10px;
+}
+
+.pd-divider {
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  margin: 15px 0;
+}
+
+.pd-price-block {
+  display: flex;
+  align-items: flex-start;
+  color: var(--color-price);
+}
+
+.pd-currency {
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.pd-price-whole {
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.pd-price-fraction {
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.pd-taxes-text {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-top: 5px;
+}
+
+.pd-description h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.pd-description p {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Buy Box */
+.pd-buybox {
+  width: 20%;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  position: sticky;
+  top: 20px;
+}
+
+.pd-buybox-price {
+  display: flex;
+  align-items: flex-start;
+  color: var(--color-price);
+  margin-bottom: 15px;
+}
+
+.pd-delivery {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 15px;
+}
+
+.text-link {
+  color: var(--color-link);
+  cursor: pointer;
+}
+
+.text-link:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+}
+
+.pd-stock {
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 15px;
+}
+
+.in-stock {
+  color: #007600;
+}
+
+.out-stock {
+  color: #B12704;
+}
+
+.pd-qty {
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.pd-qty select {
+  padding: 4px;
+  margin-left: 5px;
+  border-radius: 6px;
+  border: 1px solid #d5d9d9;
+  background-color: #f0f2f2;
+  outline: none;
+}
+
+.pd-btn-add, .pd-btn-buy {
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+.pd-secure {
+  font-size: 14px;
+  color: var(--color-link);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.pd-mobile-buybox {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .pd-page {
+    flex-direction: column;
+  }
+  
+  .pd-image-section, .pd-info-section {
+    width: 100%;
+  }
+  
+  .pd-image-section {
+    position: relative;
+    top: 0;
+  }
+  
+  .pd-mobile-buybox {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    padding: 10px;
+    border-top: 1px solid var(--color-border);
+    z-index: 100;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+  }
+}
