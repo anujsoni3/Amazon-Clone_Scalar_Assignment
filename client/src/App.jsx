@@ -10,6 +10,7 @@ import ProductDetail from './pages/ProductDetail/ProductDetail';
 import Cart from './pages/Cart/Cart';
 import Checkout from './pages/Checkout/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation/OrderConfirmation';
+import OrderHistory from './pages/OrderHistory/OrderHistory';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-confirmation/:id" element={<OrderConfirmation />} />
+              <Route path="/orders/history" element={<OrderHistory />} />
             </Routes>
           </main>
           <Footer />
