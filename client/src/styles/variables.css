@@ -1,0 +1,73 @@
+:root {
+  /* Colors - Amazon Verified Palette */
+  --color-nav-bg: #131921;
+  --color-nav-secondary: #232f3e;
+  --color-search-btn: #febd69;
+  --color-search-btn-hover: #f3a847;
+  --color-btn-primary: #ffd814;
+  --color-btn-primary-hover: #f7ca00;
+  --color-btn-secondary: #ffa41c;
+  --color-btn-secondary-hover: #fa8900;
+  --color-star: #ffa41c;
+  --color-price: #0f1111;
+  --color-link: #007185;
+  --color-link-hover: #c7511f;
+  --color-bg-page: #eaeded;
+  --color-bg-card: #ffffff;
+  --color-border: #d5d9d9;
+  --color-text: #0f1111;
+  --color-text-secondary: #565959;
+
+  /* Typography */
+  --font-family: "Amazon Ember", Arial, sans-serif;
+  
+  /* Layout */
+  --max-width: 1500px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-bg-page);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-link);
+}
+
+a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+}
+
+/* Common Utility Classes */
+.btn {
+  border: 1px solid var(--color-btn-primary);
+  background-color: var(--color-btn-primary);
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 2px 5px rgba(213,217,217,.5);
+}
+
+.btn:hover {
+  background-color: var(--color-btn-primary-hover);
+}
+
+.btn-secondary {
+  border: 1px solid var(--color-btn-secondary);
+  background-color: var(--color-btn-secondary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-btn-secondary-hover);
+}
