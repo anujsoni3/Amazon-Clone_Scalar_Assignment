@@ -2,11 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as api from '../../services/api';
 import Loader from '../../components/Loader/Loader';
+import { useCart } from '../../context/CartContext';
 import './OrderHistory.css';
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { addItemToCart } = useCart();
+  const [addingItemId, setAddingItemId] = useState(null);
+
+  const handleReorder = async (productId) => {
+    setAddingItemId(productId);
+    await addItemToCart(productId, 1);
+    setTimeout(() => setAddingItemId(null), 2000);
+  };
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -72,9 +81,13 @@ const OrderHistory = () => {
                         {item.product.name}
                       </Link>
                       <div className="oc-item-qty">Qty: {item.quantity}</div>
-                      <Link to={`/products/${item.productId}`} className="btn btn-secondary review-btn">
-                        Buy it again
-                      </Link>
+                      <button 
+                        onClick={() => handleReorder(item.productId)}
+                        className="btn btn-secondary review-btn"
+                        disabled={addingItemId === item.productId}
+                      >
+                        {addingItemId === item.productId ? 'Added to Cart!' : 'Add to Cart (Buy it again)'}
+                      </button>
                     </div>
                   </div>
                 ))}

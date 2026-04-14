@@ -33,8 +33,8 @@
 }
 
 .pd-thumbnail.active {
-  border: 1px solid var(--color-link-hover);
-  box-shadow: 0 0 3px var(--color-link-hover);
+  border: 1px solid #e77600;
+  box-shadow: 0 0 3px #e77600;
 }
 
 .pd-thumbnail img {
@@ -178,11 +178,33 @@
   outline: none;
 }
 
-.pd-btn-add, .pd-btn-buy {
+.pd-btn-add {
   width: 100%;
   margin-bottom: 10px;
   border-radius: 20px;
   padding: 10px;
+  background-color: #ffd814;
+  color: #0F1111;
+  border: none;
+  box-shadow: 0 2px 5px rgba(213,217,217,.5);
+}
+
+.pd-btn-add:hover {
+  background-color: #f7ca00;
+}
+
+.pd-btn-buy {
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 20px;
+  padding: 10px;
+  background-color: #ffa41c;
+  color: #0F1111;
+  border: none;
+}
+
+.pd-btn-buy:hover {
+  background-color: #fa8900;
 }
 
 .pd-secure {

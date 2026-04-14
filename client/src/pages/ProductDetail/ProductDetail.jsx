@@ -115,7 +115,11 @@ const ProductDetail = () => {
         </div>
         
         <div className="pd-delivery">
-          <span className="text-link">FREE delivery</span> usually within 3-4 days.
+          <span className="text-link" style={{color: '#007185'}}>FREE delivery</span> usually within 3-4 days.
+        </div>
+        
+        <div className="pd-delivery-location" style={{display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px', marginBottom: '15px', color: '#007185', cursor: 'pointer'}}>
+          <span style={{color: '#0F1111'}}>📍</span> Deliver to Anuj - Los Angeles 90001
         </div>
         
         <h3 className={`pd-stock ${product.stockQty > 0 ? 'in-stock' : 'out-stock'}`}>
@@ -148,9 +152,26 @@ const ProductDetail = () => {
               Buy Now
             </button>
 
-            <div className="pd-secure">
+            <div className="pd-secure" style={{marginTop: '15px'}}>
               <span className="secure-icon">🔒</span> Secure transaction
             </div>
+
+            <table className="pd-seller-info" style={{marginTop: '15px', fontSize: '13px', width: '100%', borderCollapse: 'collapse'}}>
+              <tbody>
+                <tr>
+                  <td style={{color: '#565959', paddingBottom: '4px'}}>Ships from</td>
+                  <td style={{color: '#0F1111'}}>Amazon</td>
+                </tr>
+                <tr>
+                  <td style={{color: '#565959', paddingBottom: '4px'}}>Sold by</td>
+                  <td style={{color: '#0F1111'}}>Amazon</td>
+                </tr>
+                <tr>
+                  <td style={{color: '#565959', paddingBottom: '4px'}}>Returns</td>
+                  <td style={{color: '#007185'}}>10 days Returnable</td>
+                </tr>
+              </tbody>
+            </table>
           </>
         )}
       </div>
