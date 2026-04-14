@@ -1,12 +1,12 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 
-const productRoutes = require('./src/routes/products');
-const categoryRoutes = require('./src/routes/categories');
-const cartRoutes = require('./src/routes/cart');
-const orderRoutes = require('./src/routes/orders');
-const errorHandler = require('./src/middleware/errorHandler');
+const productRoutes = require('./routes/products');
+const categoryRoutes = require('./routes/categories');
+const cartRoutes = require('./routes/cart');
+const orderRoutes = require('./routes/orders');
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
