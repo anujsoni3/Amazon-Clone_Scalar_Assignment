@@ -15,7 +15,10 @@
 
 .pl-sidebar h3 {
   font-size: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  margin-top: 15px;
+  font-weight: 700;
+  color: #0F1111;
 }
 
 .pl-category-list {
@@ -24,21 +27,43 @@
 }
 
 .pl-category-list li {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.pl-category-list a::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 1px solid #888C8C;
+  border-radius: 3px;
+  margin-right: 8px;
+  background: white;
+  vertical-align: middle;
 }
 
 .pl-category-list a {
   font-size: 14px;
-  color: var(--color-text);
+  color: #0F1111;
+  display: flex;
+  align-items: center;
 }
 
 .pl-category-list a:hover {
-  color: var(--color-link-hover);
+  color: #c7511f;
+}
+
+.pl-category-list a.active::before {
+  background-color: #007185;
+  border-color: #007185;
+  box-shadow: inset 0 0 0 2px white;
 }
 
 .pl-category-list a.active {
   font-weight: bold;
-  color: var(--color-link-hover);
+  color: #0F1111;
 }
 
 .pl-filter-section {
@@ -47,6 +72,10 @@
 
 .pl-filter-section a {
   font-size: 14px;
+  color: #0F1111;
+}
+.pl-filter-section a:hover {
+  color: #c7511f;
 }
 
 .pl-main {

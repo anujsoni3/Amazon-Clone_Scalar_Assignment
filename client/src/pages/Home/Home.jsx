@@ -8,18 +8,40 @@ import './Home.css';
 const Home = () => {
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [amazonBasics, setAmazonBasics] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const heroBanners = [
+    "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=2070&auto=format&fit=crop", // generic amazon-ish boxes
+    "https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=1974&auto=format&fit=crop", // camera/electronics themed
+    "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop", // clothing themed
+    "https://images.unsplash.com/photo-1588666305190-64ad515cdde0?q=80&w=2070&auto=format&fit=crop"  // home/outdoor themed
+  ];
+
+  // Auto Slider
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev === heroBanners.length - 1 ? 0 : prev + 1));
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [heroBanners.length]);
+
+  const slideLeft = () => setCurrentSlide(prev => prev === 0 ? heroBanners.length - 1 : prev - 1);
+  const slideRight = () => setCurrentSlide(prev => prev === heroBanners.length - 1 ? 0 : prev + 1);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [catsRes, prodsRes] = await Promise.all([
+        const [catsRes, prodsRes, basicsRes] = await Promise.all([
           api.getCategories(),
-          api.getProducts({ limit: 4, sort: 'rating' })
+          api.getProducts({ limit: 4, sort: 'rating' }),
+          api.getProducts({ category: 'amazon-basics', limit: 6 })
         ]);
         
         if (catsRes.data.success) setCategories(catsRes.data.data);
         if (prodsRes.data.success) setFeaturedProducts(prodsRes.data.data);
+        if (basicsRes.data?.success) setAmazonBasics(basicsRes.data.data);
       } catch (err) {
         console.error('Error fetching home data:', err);
       } finally {
@@ -46,11 +68,14 @@ const Home = () => {
   return (
     <div className="home">
       <div className="hero-container">
-        <img 
-          className="hero-image" 
-          src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=2070&auto=format&fit=crop" 
-          alt="Amazon Hero Banner" 
-        />
+        <div className="hero-slider" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
+          {heroBanners.map((img, idx) => (
+            <img key={idx} className="hero-image" src={img} alt={`Banner ${idx}`} />
+          ))}
+        </div>
+        <button className="slider-btn left-btn" onClick={slideLeft}>&#10094;</button>
+        <button className="slider-btn right-btn" onClick={slideRight}>&#10095;</button>
+        <div className="hero-fade-bottom"></div>
       </div>
 
       <div className="home-content">
@@ -78,6 +103,19 @@ const Home = () => {
             ))}
           </div>
         </div>
+
+        {amazonBasics.length > 0 && (
+          <div className="product-row-container basics-container">
+            <h2>Explore Amazon Basics</h2>
+            <div className="product-row">
+              {amazonBasics.map(product => (
+                <div key={product.id} className="product-row-item">
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

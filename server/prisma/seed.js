@@ -32,8 +32,9 @@ async function main() {
     prisma.category.create({ data: { name: 'Home & Kitchen', slug: 'home-kitchen' } }),
     prisma.category.create({ data: { name: 'Sports & Outdoors', slug: 'sports-outdoors' } }),
     prisma.category.create({ data: { name: 'Beauty', slug: 'beauty' } }),
+    prisma.category.create({ data: { name: 'Amazon Basics', slug: 'amazon-basics' } }),
   ]);
-  const [electronics, books, clothing, homeKitchen, sports, beauty] = categories;
+  const [electronics, books, clothing, homeKitchen, sports, beauty, amazonBasics] = categories;
   console.log(`✅ ${categories.length} categories created`);
 
   // ── Helper to create product with images ──────────────────────────────
@@ -530,6 +531,80 @@ async function main() {
     },
   ];
 
+  // ── Amazon Basics (5 products) ─────────────────────────────────────────
+  const amazonBasicsProducts = [
+    {
+      name: 'Amazon Basics 8-Sheet Capacity, Cross-Cut Paper and Credit Card Shredder',
+      description: 'Shreds up to 8 sheets of bond paper at a time; destroys credit cards (one at a time, through the dedicated slot). Cross-cut paper shredder with 4.1-gallon bin with transparent window.',
+      price: 3499,
+      stockQty: 250,
+      rating: 4.6,
+      reviewCount: 154320,
+      categoryId: amazonBasics.id,
+      images: [
+        'https://images.unsplash.com/photo-1582215286523-28c0b29787e9?w=500&q=80',
+        'https://images.unsplash.com/photo-1616422285623-13ff0162193c?w=500&q=80',
+        'https://images.unsplash.com/photo-1596495578065-6e0763fa1178?w=500&q=80'
+      ],
+    },
+    {
+      name: 'Amazon Basics High-Speed HDMI Cable, 18 Gbps, 4K/60Hz, 6 Foot',
+      description: 'Features: Contacts gold-plated, supports 4K Video at 60 Hz, 2160p, 48 bit/px color depth that supports bandwidth up to 18Gbps.',
+      price: 499,
+      stockQty: 1000,
+      rating: 4.7,
+      reviewCount: 382000,
+      categoryId: amazonBasics.id,
+      images: [
+        'https://images.unsplash.com/photo-1538356897257-89759d57aef9?w=500&q=80',
+        'https://images.unsplash.com/photo-1606342614399-56338b24578b?w=500&q=80',
+        'https://images.unsplash.com/photo-1518331707925-502a5f57abff?w=500&q=80'
+      ],
+    },
+    {
+      name: 'Amazon Basics AA Performance Alkaline Batteries (48-Pack)',
+      description: 'Pack of 48 1.5V AA Alkaline Batteries. Improved anti-corrosion components and new zinc composition giving 10-year anti-leakage shelf life.',
+      price: 1199,
+      stockQty: 800,
+      rating: 4.8,
+      reviewCount: 521000,
+      categoryId: amazonBasics.id,
+      images: [
+        'https://images.unsplash.com/photo-1584347710323-832f0c057632?w=500&q=80',
+        'https://images.unsplash.com/photo-1502573219491-ff2de1a24d85?w=500&q=80',
+        'https://images.unsplash.com/photo-1610411326442-9f379ae2c6a0?w=500&q=80'
+      ],
+    },
+    {
+      name: 'Amazon Basics High-Density Exercise Equipment and Treadmill Mat',
+      description: 'High-density equipment mat helps protect floors and carpets; ideal for treadmills, ellipticals, rowing machines, and other heavy exercise equipment.',
+      price: 2199,
+      stockQty: 180,
+      rating: 4.5,
+      reviewCount: 65400,
+      categoryId: amazonBasics.id,
+      images: [
+        'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500&q=80',
+        'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=500&q=80',
+        'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&q=80'
+      ],
+    },
+    {
+      name: 'Amazon Basics Everyday Carry Pocket Knife with Pocket Clip',
+      description: 'Everyday carry pocket knife featuring a 3.1-inch stainless-steel blade. Aluminum handle for strength; thumb stud for 1-handed opening.',
+      price: 899,
+      stockQty: 340,
+      rating: 4.4,
+      reviewCount: 22100,
+      categoryId: amazonBasics.id,
+      images: [
+        'https://images.unsplash.com/photo-1582200508658-0051e70e28f3?w=500&q=80',
+        'https://images.unsplash.com/photo-1596482186716-43b9fec14774?w=500&q=80',
+        'https://images.unsplash.com/photo-1551368940-272e2dbcc84b?w=500&q=80'
+      ],
+    }
+  ];
+
   // ── Create all products ──────────────────────────────────────────────
   const allProductData = [
     ...electronicsProducts,
@@ -538,6 +613,7 @@ async function main() {
     ...homeKitchenProducts,
     ...sportsProducts,
     ...beautyProducts,
+    ...amazonBasicsProducts,
   ];
 
   let productCount = 0;
