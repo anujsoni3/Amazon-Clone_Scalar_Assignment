@@ -1,0 +1,120 @@
+// This is your Prisma schema file
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String     @unique
+  createdAt DateTime   @default(now()) @map("created_at")
+  cartItems CartItem[]
+  orders    Order[]
+  wishlists Wishlist[]
+
+  @@map("users")
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String
+  slug     String    @unique
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          Int            @id @default(autoincrement())
+  name        String
+  description String
+  price       Decimal        @db.Decimal(10, 2)
+  stockQty    Int            @default(0) @map("stock_qty")
+  rating      Decimal        @default(0) @db.Decimal(3, 1)
+  reviewCount Int            @default(0) @map("review_count")
+  categoryId  Int            @map("category_id")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  category    Category       @relation(fields: [categoryId], references: [id])
+  images      ProductImage[]
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+  wishlists   Wishlist[]
+
+  @@map("products")
+}
+
+model ProductImage {
+  id        Int     @id @default(autoincrement())
+  productId Int     @map("product_id")
+  imageUrl  String  @map("image_url")
+  isPrimary Boolean @default(false) @map("is_primary")
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_images")
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  productId Int      @map("product_id")
+  quantity  Int      @default(1)
+  addedAt   DateTime @default(now()) @map("added_at")
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+  @@map("cart_items")
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  userId          Int         @map("user_id")
+  status          OrderStatus @default(PENDING)
+  subtotal        Decimal     @db.Decimal(10, 2)
+  shippingCost    Decimal     @default(0) @map("shipping_cost") @db.Decimal(10, 2)
+  total           Decimal     @db.Decimal(10, 2)
+  shippingAddress Json        @map("shipping_address")
+  placedAt        DateTime    @default(now()) @map("placed_at")
+  user            User        @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   String  @map("order_id")
+  productId Int     @map("product_id")
+  quantity  Int
+  unitPrice Decimal @map("unit_price") @db.Decimal(10, 2)
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model Wishlist {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  productId Int      @map("product_id")
+  addedAt   DateTime @default(now()) @map("added_at")
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+  @@map("wishlists")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+}

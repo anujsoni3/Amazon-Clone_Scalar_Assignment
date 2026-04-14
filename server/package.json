@@ -1,0 +1,37 @@
+{
+  "name": "amazon-clone-server",
+  "version": "1.0.0",
+  "description": "Amazon Clone REST API — Node.js + Express + Prisma + PostgreSQL",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "db:migrate": "npx prisma migrate dev",
+    "db:push": "npx prisma db push",
+    "db:seed": "node prisma/seed.js",
+    "db:studio": "npx prisma studio",
+    "db:generate": "npx prisma generate"
+  },
+  "keywords": [
+    "express",
+    "prisma",
+    "postgresql",
+    "ecommerce"
+  ],
+  "author": "Anuj",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@prisma/client": "^5.22.0",
+    "nodemon": "^3.1.14",
+    "prisma": "^5.22.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
+}
