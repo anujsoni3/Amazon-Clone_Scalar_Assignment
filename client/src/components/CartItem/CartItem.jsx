@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import * as api from '../../services/api';
 
 const CartItem = ({ item }) => {
   const { updateQuantity, removeItem } = useCart();
@@ -14,6 +15,17 @@ const CartItem = ({ item }) => {
   const handleRemove = (e) => {
     e.preventDefault();
     removeItem(item.id);
+  };
+
+  const handleSaveForLater = async (e) => {
+    e.preventDefault();
+    try {
+      await api.addToWishlist(product.id);
+      await removeItem(item.id);
+    } catch (error) {
+      console.error('Failed to save item for later', error);
+      alert('Unable to save item for later right now.');
+    }
   };
 
   return (
@@ -42,7 +54,7 @@ const CartItem = ({ item }) => {
           <div className="cart-action-divider">|</div>
           <a href="#" className="text-action" onClick={handleRemove}>Delete</a>
           <div className="cart-action-divider">|</div>
-          <a href="#" className="text-action">Save for later</a>
+          <a href="#" className="text-action" onClick={handleSaveForLater}>Save for later</a>
         </div>
       </div>
       

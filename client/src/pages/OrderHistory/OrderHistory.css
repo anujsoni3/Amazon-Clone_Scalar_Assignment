@@ -99,6 +99,11 @@
   border-radius: 20px;
 }
 
+.write-review-link {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
 @media (max-width: 768px) {
   .oc-header {
     flex-direction: column;
