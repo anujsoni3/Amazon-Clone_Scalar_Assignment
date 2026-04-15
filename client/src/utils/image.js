@@ -19,10 +19,10 @@ export const getPlaceholderImage = (productName = 'Product', width = 400, height
 };
 
 export const normalizeImageUrl = (rawUrl, fallback = IMAGE_FALLBACK) => {
-  if (!rawUrl) return getPlaceholderImage();
+  if (!rawUrl) return fallback;
 
   const url = String(rawUrl).trim();
-  if (!url) return getPlaceholderImage();
+  if (!url) return fallback;
 
   if (url.startsWith('data:')) return url;
   if (url.startsWith('//')) return `https:${url}`;
@@ -34,7 +34,7 @@ export const normalizeImageUrl = (rawUrl, fallback = IMAGE_FALLBACK) => {
     return `/${url.replace(/^\/+/, '')}`;
   }
 
-  return getPlaceholderImage();
+  return fallback;
 };
 
 export const withImageFallback = (event, fallback = IMAGE_FALLBACK) => {

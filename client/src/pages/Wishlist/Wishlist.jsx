@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader/Loader';
 import { useCart } from '../../context/CartContext';
@@ -31,7 +31,7 @@ const Wishlist = () => {
   const [loading, setLoading] = useState(true);
   const { addItemToCart, setNotice } = useCart();
 
-  const fetchWishlist = async () => {
+  const fetchWishlist = useCallback(async () => {
     try {
       const res = await api.getWishlist();
       if (res.data.success) {
@@ -54,11 +54,11 @@ const Wishlist = () => {
       }
       setLoading(false);
     }
-  };
+  }, [setNotice]);
 
   useEffect(() => {
     fetchWishlist();
-  }, []);
+  }, [fetchWishlist]);
 
   const handleRemove = async (itemId) => {
     const nextItems = items.filter((item) => item.id !== itemId);

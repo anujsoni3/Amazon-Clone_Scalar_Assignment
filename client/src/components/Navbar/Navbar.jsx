@@ -7,19 +7,16 @@ import './Navbar.css';
 const Navbar = () => {
   const { cartSummary } = useCart();
   const navigate = useNavigate();
-  const [showShippingNotice, setShowShippingNotice] = useState(false);
-  const [showDealsNotice, setShowDealsNotice] = useState(false);
-  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+  const shouldShowHeaderPopups = !sessionStorage.getItem('amazon-clone-nav-popups-shown');
+  const [showShippingNotice, setShowShippingNotice] = useState(shouldShowHeaderPopups);
+  const [showDealsNotice, setShowDealsNotice] = useState(shouldShowHeaderPopups);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(shouldShowHeaderPopups);
 
   useEffect(() => {
-    const shown = sessionStorage.getItem('amazon-clone-nav-popups-shown');
-    if (shown) return;
-
-    setShowShippingNotice(true);
-    setShowDealsNotice(true);
-    setShowSignInPrompt(true);
-    sessionStorage.setItem('amazon-clone-nav-popups-shown', '1');
-  }, []);
+    if (showShippingNotice || showDealsNotice || showSignInPrompt) {
+      sessionStorage.setItem('amazon-clone-nav-popups-shown', '1');
+    }
+  }, [showShippingNotice, showDealsNotice, showSignInPrompt]);
 
   const handleSearch = (e) => {
     e.preventDefault();

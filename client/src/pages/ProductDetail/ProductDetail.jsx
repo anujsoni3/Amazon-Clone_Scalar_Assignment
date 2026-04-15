@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import StarRating from '../../components/StarRating/StarRating';
 import Loader from '../../components/Loader/Loader';
@@ -36,9 +36,9 @@ const ProductDetail = () => {
   const [reviewMediaFilter, setReviewMediaFilter] = useState('all');
   const [loadingReviews, setLoadingReviews] = useState(true);
 
-  const fallbackImage = getSizedFallback(800, 600);
+  const fallbackImage = useMemo(() => getSizedFallback(800, 600), []);
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     setLoadingReviews(true);
     try {
       const reviewRes = await api.getProductReviews(id, {
@@ -57,7 +57,7 @@ const ProductDetail = () => {
     } finally {
       setLoadingReviews(false);
     }
-  };
+  }, [id, reviewRatingFilter, reviewSort, appliedReviewSearch, reviewMediaFilter]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -97,11 +97,11 @@ const ProductDetail = () => {
     };
 
     fetchProduct();
-  }, [id]);
+  }, [id, fallbackImage]);
 
   useEffect(() => {
     fetchReviews();
-  }, [id, reviewRatingFilter, reviewSort, appliedReviewSearch, reviewMediaFilter]);
+  }, [fetchReviews]);
 
   useEffect(() => {
     if (location.state?.openReview && reviewEligibility.eligible) {

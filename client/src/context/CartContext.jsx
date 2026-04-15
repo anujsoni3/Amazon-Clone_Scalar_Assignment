@@ -31,6 +31,7 @@ const buildSummary = (items) => {
 
 const normalizeDemoCart = () => demoCartItems.map((item) => ({ ...item }));
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
