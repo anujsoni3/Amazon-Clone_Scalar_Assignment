@@ -52,11 +52,27 @@ const Footer = () => {
       </div>
       
       <div className="footer-bottom">
-        <div className="footer-logo">
-          <h2>Amazon Clone</h2>
+        <div className="footer-bottom-inner">
+          <div className="footer-logo" aria-label="Amazon">
+            <span className="footer-logo-text">amazon</span>
+            <span className="footer-logo-domain">.in</span>
+          </div>
+
+          <div className="footer-region-controls">
+            <button type="button" className="footer-pill">English</button>
+            <button type="button" className="footer-pill">INR - Indian Rupee</button>
+            <button type="button" className="footer-pill">India</button>
+          </div>
         </div>
+
+        <div className="footer-legal">
+          <a href="#">Conditions of Use</a>
+          <a href="#">Privacy Notice</a>
+          <a href="#">Interest-Based Ads</a>
+        </div>
+
         <div className="footer-copyright">
-          <span>Built for Scalar SDE Intern Assignment | Using React, Node, Express, PostgreSQL</span>
+          <span>© 2026, Amazon Clone by Anuj Soni</span>
         </div>
       </div>
     </footer>

@@ -1,10 +1,16 @@
 .navbar-main {
   background-color: var(--color-nav-bg);
   color: white;
+  height: 60px;
+  padding: 0 8px;
+}
+
+.navbar-main-inner {
+  max-width: 1500px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
-  height: 60px;
-  padding: 0 10px;
+  height: 100%;
   gap: 10px;
 }
 
@@ -26,6 +32,28 @@
 .nav-logo h2 {
   font-family: Arial, sans-serif;
   font-weight: bold;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  color: white;
+}
+
+.nav-logo-text {
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.7px;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+.nav-logo-domain {
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  padding-bottom: 1px;
 }
 
 .nav-location {
@@ -82,6 +110,10 @@
   padding: 0 10px;
   outline: none;
   font-size: 15px;
+}
+
+.search-input::placeholder {
+  color: #6f7373;
 }
 
 .search-btn {
@@ -157,6 +189,7 @@
   height: 40px;
   padding: 0 10px;
   overflow-x: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .navbar-secondary::-webkit-scrollbar {
@@ -185,6 +218,64 @@
   font-weight: 700;
 }
 
+.checkout-header {
+  border-bottom: 1px solid #d5d9d9;
+  background-color: #ffffff;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.checkout-header-inner {
+  max-width: 1024px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.checkout-logo {
+  color: #111111;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  width: fit-content;
+}
+
+.checkout-logo-text {
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+.checkout-logo-domain {
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.checkout-title {
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: #111111;
+}
+
+.checkout-lock {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #555555;
+  font-size: 0.86rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .hide-on-mobile {
@@ -192,7 +283,33 @@
   }
   
   .navbar-main {
-    padding: 0 5px;
+    padding: 0 6px;
     gap: 5px;
+  }
+
+  .navbar-main-inner {
+    gap: 6px;
+  }
+
+  .nav-logo-text {
+    font-size: 1.35rem;
+  }
+
+  .checkout-header {
+    height: 56px;
+    padding: 0 10px;
+  }
+
+  .checkout-header-inner {
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+  }
+
+  .checkout-title {
+    font-size: 1.05rem;
+  }
+
+  .checkout-lock span {
+    display: none;
   }
 }

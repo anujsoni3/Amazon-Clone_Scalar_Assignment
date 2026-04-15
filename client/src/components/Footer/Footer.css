@@ -55,16 +55,78 @@
 
 .footer-bottom {
   background-color: var(--color-nav-bg);
-  padding: 30px 0;
+  padding: 24px 0 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 14px;
 }
 
-.footer-logo h2 {
-  margin: 0;
-  font-family: Arial, sans-serif;
+.footer-bottom-inner {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.footer-logo {
+  color: #ffffff;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.footer-logo-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+.footer-logo-domain {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.footer-region-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.footer-pill {
+  background-color: transparent;
+  border: 1px solid #848688;
+  color: #d5d9d9;
+  border-radius: 3px;
+  padding: 7px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.footer-pill:hover {
+  border-color: #d5d9d9;
+}
+
+.footer-legal {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.footer-legal a {
+  color: #dddddd;
+  font-size: 12px;
+}
+
+.footer-legal a:hover {
+  text-decoration: underline;
 }
 
 .footer-copyright {
@@ -81,5 +143,14 @@
   
   .footer-column {
     width: 45%;
+  }
+
+  .footer-bottom {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .footer-region-controls {
+    justify-content: center;
   }
 }
