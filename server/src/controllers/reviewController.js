@@ -10,7 +10,7 @@ const getProductReviews = async (req, res, next) => {
     const where = { productId: parseInt(productId) };
 
     if (rating && rating !== 'all') {
-      where.rating = { gte: parseInt(rating) };
+      where.rating = parseInt(rating);
     }
 
     if (q && String(q).trim()) {

@@ -30,6 +30,7 @@ const ProductDetail = () => {
   const [zoomPoint, setZoomPoint] = useState({ x: 50, y: 50 });
   const [openSpecSection, setOpenSpecSection] = useState('features');
   const [reviewSearch, setReviewSearch] = useState('');
+  const [appliedReviewSearch, setAppliedReviewSearch] = useState('');
   const [reviewRatingFilter, setReviewRatingFilter] = useState('all');
   const [reviewSort, setReviewSort] = useState('recent');
   const [reviewMediaFilter, setReviewMediaFilter] = useState('all');
@@ -43,7 +44,7 @@ const ProductDetail = () => {
       const reviewRes = await api.getProductReviews(id, {
         rating: reviewRatingFilter,
         sort: reviewSort,
-        q: reviewSearch || undefined,
+        q: appliedReviewSearch || undefined,
         hasImage: reviewMediaFilter === 'images' ? '1' : undefined,
       });
 
@@ -100,7 +101,7 @@ const ProductDetail = () => {
 
   useEffect(() => {
     fetchReviews();
-  }, [id, reviewRatingFilter, reviewSort, reviewSearch, reviewMediaFilter]);
+  }, [id, reviewRatingFilter, reviewSort, appliedReviewSearch, reviewMediaFilter]);
 
   useEffect(() => {
     if (location.state?.openReview && reviewEligibility.eligible) {
@@ -204,10 +205,31 @@ const ProductDetail = () => {
 
   const reviewSource = reviews;
   const reviewImages = reviewSource.filter((review) => review.imageUrl);
+  const hasReviewFiltersApplied = reviewRatingFilter !== 'all' || reviewMediaFilter !== 'all' || Boolean(appliedReviewSearch.trim());
+
+  const getEstimatedBucketPercentages = () => {
+    const avg = Number(product.rating || 0);
+    if (avg <= 0) {
+      return { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    }
+
+    const center = Math.max(1, Math.min(5, Math.round(avg)));
+    const map = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    map[center] = 62;
+    if (center < 5) map[center + 1] += 21;
+    if (center > 1) map[center - 1] += 14;
+    const used = Object.values(map).reduce((sum, value) => sum + value, 0);
+    map[center] += Math.max(0, 100 - used);
+    return map;
+  };
+
+  const estimatedPercentages = getEstimatedBucketPercentages();
 
   const ratingBuckets = [5, 4, 3, 2, 1].map((star) => {
     const count = reviewSource.filter((review) => Number(review.rating) === star).length;
-    const percentage = reviewSource.length ? Math.round((count / reviewSource.length) * 100) : 0;
+    const percentage = reviewSource.length
+      ? Math.round((count / reviewSource.length) * 100)
+      : (!hasReviewFiltersApplied && Number(product.reviewCount) > 0 ? estimatedPercentages[star] : 0);
     return { star, count, percentage };
   });
 
@@ -415,7 +437,7 @@ const ProductDetail = () => {
             </select>
           </div>
 
-          <form className="pd-review-search" onSubmit={(event) => { event.preventDefault(); fetchReviews(); }}>
+          <form className="pd-review-search" onSubmit={(event) => { event.preventDefault(); setAppliedReviewSearch(reviewSearch.trim()); }}>
             <input
               type="text"
               placeholder="Search reviews"
@@ -430,7 +452,10 @@ const ProductDetail = () => {
           <div className="pd-review-overall">
             <div className="pd-review-score">{averageRating} out of 5</div>
             <p>{product.reviewCount} global ratings</p>
-            {reviewSearch && <p className="pd-review-filter-note">Search: "{reviewSearch}"</p>}
+            {appliedReviewSearch && <p className="pd-review-filter-note">Search: "{appliedReviewSearch}"</p>}
+            {!reviewSource.length && !hasReviewFiltersApplied && Number(product.reviewCount) > 0 && (
+              <p className="pd-review-filter-note">Detailed review text is currently unavailable. Overall rating data is shown above.</p>
+            )}
           </div>
           <div className="pd-rating-bars">
             {ratingBuckets.map((bucket) => (
@@ -458,7 +483,13 @@ const ProductDetail = () => {
 
         <div className="pd-review-list">
           {loadingReviews && <p className="pd-review-note">Loading reviews...</p>}
-          {!loadingReviews && reviewSource.length === 0 && <p className="pd-review-note">No reviews found for this filter.</p>}
+          {!loadingReviews && reviewSource.length === 0 && hasReviewFiltersApplied && <p className="pd-review-note">No reviews found for this filter.</p>}
+          {!loadingReviews && reviewSource.length === 0 && !hasReviewFiltersApplied && Number(product.reviewCount) > 0 && (
+            <p className="pd-review-note">No individual review entries available yet. Try another product or check back later.</p>
+          )}
+          {!loadingReviews && reviewSource.length === 0 && Number(product.reviewCount) === 0 && (
+            <p className="pd-review-note">No reviews yet. Be the first to review this product.</p>
+          )}
           {!loadingReviews && reviewSource.map((review) => (
             <article key={review.id} className="pd-review-card">
               <div className="pd-review-head">

@@ -10,6 +10,25 @@ import './Home.css';
 
 const FALLBACK_IMAGE = getSizedFallback(800, 600);
 
+const createTileArt = (label, topColor, bottomColor) => {
+  const safeLabel = String(label || 'Shop').slice(0, 28);
+  return `data:image/svg+xml;utf8,${encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="${topColor}"/>
+          <stop offset="100%" stop-color="${bottomColor}"/>
+        </linearGradient>
+      </defs>
+      <rect width="640" height="420" fill="url(#g)"/>
+      <circle cx="530" cy="92" r="88" fill="rgba(255,255,255,0.18)"/>
+      <circle cx="120" cy="338" r="72" fill="rgba(255,255,255,0.14)"/>
+      <rect x="52" y="286" width="536" height="86" rx="16" fill="rgba(255,255,255,0.82)"/>
+      <text x="320" y="340" text-anchor="middle" fill="#111111" font-family="Arial" font-size="38" font-weight="700">${safeLabel}</text>
+    </svg>
+  `)}`;
+};
+
 const Home = () => {
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -73,13 +92,19 @@ const Home = () => {
   const basicsRail = amazonBasics.length > 0 ? amazonBasics : featuredProducts.slice(0, 6);
 
   const getCategoryThemeImage = (slug) => {
-    switch(slug) {
-      case 'electronics': return "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=500&q=80";
-      case 'books': return "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500&q=80";
-      case 'clothing': return "https://images.unsplash.com/photo-1523381210434-271e8be1f528?w=500&q=80";
-      case 'beauty': return "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&q=80";
-      case 'home-kitchen': return "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=500&q=80";
-      default: return "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=500&q=80";
+    switch (slug) {
+      case 'electronics':
+        return createTileArt('Electronics', '#2c4a92', '#5f7fd1');
+      case 'books':
+        return createTileArt('Books', '#8b4a22', '#c7783f');
+      case 'clothing':
+        return createTileArt('Clothing', '#3f3f56', '#7c7ca1');
+      case 'beauty':
+        return createTileArt('Beauty', '#aa5f8b', '#de93be');
+      case 'home-kitchen':
+        return createTileArt('Home & Kitchen', '#32715f', '#6db39f');
+      default:
+        return createTileArt('Shop', '#3c5f7a', '#749ab8');
     }
   };
 
@@ -97,30 +122,30 @@ const Home = () => {
     {
       title: 'Gaming accessories',
       items: [
-        { label: 'Headsets', image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=420&q=80' },
-        { label: 'Keyboards', image: 'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=420&q=80' },
-        { label: 'Computer mice', image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=420&q=80' },
-        { label: 'Chairs', image: 'https://images.unsplash.com/photo-1505843513577-22bb7d21e455?w=420&q=80' }
+        { label: 'Headsets', image: createTileArt('Headsets', '#1f3e71', '#436eb0') },
+        { label: 'Keyboards', image: createTileArt('Keyboards', '#4a3d68', '#7d6ca5') },
+        { label: 'Computer mice', image: createTileArt('Computer mice', '#395157', '#6f8f96') },
+        { label: 'Chairs', image: createTileArt('Chairs', '#5d4b3f', '#9a7f6f') }
       ],
       link: '/products?category=electronics'
     },
     {
       title: 'Shop deals in Fashion',
       items: [
-        { label: 'Jeans', image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=420&q=80' },
-        { label: 'Tops', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=420&q=80' },
-        { label: 'Dresses', image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=420&q=80' },
-        { label: 'Shoes', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=420&q=80' }
+        { label: 'Jeans', image: createTileArt('Jeans', '#2f4f77', '#5577a5') },
+        { label: 'Tops', image: createTileArt('Tops', '#97556a', '#d18ca2') },
+        { label: 'Dresses', image: createTileArt('Dresses', '#7b406f', '#b774aa') },
+        { label: 'Shoes', image: createTileArt('Shoes', '#5a4737', '#90735a') }
       ],
       link: '/products?category=clothing'
     },
     {
       title: 'Refresh your space',
       items: [
-        { label: 'Dining', image: 'https://images.unsplash.com/photo-1617104551722-3b2d513664c0?w=420&q=80' },
-        { label: 'Home', image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=420&q=80' },
-        { label: 'Kitchen', image: 'https://images.unsplash.com/photo-1556911220-bda9f7f7597e?w=420&q=80' },
-        { label: 'Health', image: 'https://images.unsplash.com/photo-1612532275214-e4ca76d0e4d1?w=420&q=80' }
+        { label: 'Dining', image: createTileArt('Dining', '#5f6f40', '#99b368') },
+        { label: 'Home', image: createTileArt('Home', '#3f6477', '#7397aa') },
+        { label: 'Kitchen', image: createTileArt('Kitchen', '#4f6b58', '#7fa48e') },
+        { label: 'Health', image: createTileArt('Health', '#7b5f8f', '#b595cc') }
       ],
       link: '/products?category=home-kitchen'
     }
