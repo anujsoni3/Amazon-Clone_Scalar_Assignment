@@ -6,6 +6,8 @@ const productRoutes = require('./routes/products');
 const categoryRoutes = require('./routes/categories');
 const cartRoutes = require('./routes/cart');
 const orderRoutes = require('./routes/orders');
+const wishlistRoutes = require('./routes/wishlist');
+const reviewRoutes = require('./routes/reviews');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -27,6 +29,8 @@ app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // ── 404 handler ───────────────────────────────────────────────────────
 app.use((req, res) => {
