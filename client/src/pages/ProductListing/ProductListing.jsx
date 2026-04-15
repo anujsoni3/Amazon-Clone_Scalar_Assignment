@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import Loader from '../../components/Loader/Loader';
 import * as api from '../../services/api';
+import { getSocket } from '../../services/socket';
 import { demoCategories, demoProducts, getDemoProductsByCategory } from '../../data/demoCatalog';
 import './ProductListing.css';
 
@@ -186,6 +187,56 @@ const ProductListing = () => {
         : [...prev, color]
     );
   };
+
+  const refreshProductsByIds = useCallback(async (updatedIds) => {
+    if (!Array.isArray(updatedIds) || updatedIds.length === 0) return;
+
+    const normalizedIds = updatedIds
+      .map((value) => parseInt(value, 10))
+      .filter((value) => !Number.isNaN(value));
+
+    if (normalizedIds.length === 0) return;
+
+    const visibleIds = products
+      .map((product) => product.id)
+      .filter((idValue) => normalizedIds.includes(idValue));
+
+    if (visibleIds.length === 0) return;
+
+    try {
+      const refreshed = await Promise.all(
+        visibleIds.map(async (productId) => {
+          try {
+            const response = await api.getProductById(productId);
+            return response.data.success ? response.data.data : null;
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      const byId = new Map(refreshed.filter(Boolean).map((product) => [product.id, product]));
+      if (byId.size === 0) return;
+
+      setProducts((prev) => prev.map((product) => byId.get(product.id) || product));
+    } catch (error) {
+      console.error('Realtime product refresh failed:', error);
+    }
+  }, [products]);
+
+  useEffect(() => {
+    const socket = getSocket();
+
+    const handleInventoryUpdated = (payload) => {
+      refreshProductsByIds(payload?.productIds || []);
+    };
+
+    socket.on('inventory:updated', handleInventoryUpdated);
+
+    return () => {
+      socket.off('inventory:updated', handleInventoryUpdated);
+    };
+  }, [refreshProductsByIds]);
 
   const resultCount = filteredProducts.length;
 

@@ -4,6 +4,7 @@ import StarRating from '../../components/StarRating/StarRating';
 import Loader from '../../components/Loader/Loader';
 import { useCart } from '../../context/CartContext';
 import * as api from '../../services/api';
+import { getSocket } from '../../services/socket';
 import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
 import { formatPrice } from '../../utils/price';
 import './ProductDetail.css';
@@ -111,6 +112,63 @@ const ProductDetail = () => {
       }
     }
   }, [location.state, reviewEligibility]);
+
+  useEffect(() => {
+    const socket = getSocket();
+
+    const refreshCurrentProduct = async () => {
+      try {
+        const response = await api.getProductById(id);
+        if (response.data.success) {
+          const nextProduct = response.data.data;
+          setProduct(nextProduct);
+        }
+      } catch (error) {
+        console.error('Realtime PDP refresh failed:', error);
+      }
+    };
+
+    const refreshSuggestions = async (idsToRefresh) => {
+      if (!Array.isArray(idsToRefresh) || idsToRefresh.length === 0) return;
+      const idSet = new Set(idsToRefresh.map((value) => parseInt(value, 10)).filter((value) => !Number.isNaN(value)));
+      const relevant = suggestions.filter((item) => idSet.has(item.id));
+      if (relevant.length === 0) return;
+
+      const refreshed = await Promise.all(
+        relevant.map(async (item) => {
+          try {
+            const response = await api.getProductById(item.id);
+            return response.data.success ? response.data.data : null;
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      const byId = new Map(refreshed.filter(Boolean).map((item) => [item.id, item]));
+      if (byId.size === 0) return;
+
+      setSuggestions((prev) => prev.map((item) => byId.get(item.id) || item));
+    };
+
+    const handleInventoryUpdated = (payload) => {
+      const ids = payload?.productIds || [];
+      const normalized = ids.map((value) => parseInt(value, 10)).filter((value) => !Number.isNaN(value));
+      const productId = parseInt(id, 10);
+
+      if (normalized.includes(productId)) {
+        refreshCurrentProduct();
+      }
+
+      refreshSuggestions(normalized);
+    };
+
+    socket.on('inventory:updated', handleInventoryUpdated);
+
+    return () => {
+      socket.off('inventory:updated', handleInventoryUpdated);
+    };
+  }, [id, suggestions]);
 
   if (loading) return <Loader fullPage />;
   if (!product) return <div style={{ padding: '40px', textAlign: 'center' }}>Product not found</div>;
