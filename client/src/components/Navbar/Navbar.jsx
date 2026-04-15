@@ -5,18 +5,29 @@ import { useCart } from '../../context/CartContext';
 import './Navbar.css';
 
 const Navbar = () => {
-  const { cartSummary } = useCart();
+  const { cartSummary, lowStockCount, inventoryPulseAt } = useCart();
   const navigate = useNavigate();
   const shouldShowHeaderPopups = !sessionStorage.getItem('amazon-clone-nav-popups-shown');
   const [showShippingNotice, setShowShippingNotice] = useState(shouldShowHeaderPopups);
   const [showDealsNotice, setShowDealsNotice] = useState(shouldShowHeaderPopups);
   const [showSignInPrompt, setShowSignInPrompt] = useState(shouldShowHeaderPopups);
+  const [stockPulse, setStockPulse] = useState(false);
 
   useEffect(() => {
     if (showShippingNotice || showDealsNotice || showSignInPrompt) {
       sessionStorage.setItem('amazon-clone-nav-popups-shown', '1');
     }
   }, [showShippingNotice, showDealsNotice, showSignInPrompt]);
+
+  useEffect(() => {
+    if (!inventoryPulseAt) return;
+    const activate = setTimeout(() => setStockPulse(true), 0);
+    const deactivate = setTimeout(() => setStockPulse(false), 1200);
+    return () => {
+      clearTimeout(activate);
+      clearTimeout(deactivate);
+    };
+  }, [inventoryPulseAt]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -101,12 +112,19 @@ const Navbar = () => {
             <span className="nav-line-2">Wishlist</span>
           </Link>
 
-          <Link to="/cart" className="nav-cart nav-border">
+          <Link to="/cart" className={`nav-cart nav-border ${stockPulse ? 'nav-cart-stock-pulse' : ''}`}>
             <div className="cart-icon-container">
               <span className="cart-count">{cartSummary?.totalQty || 0}</span>
               <ShoppingCart size={32} />
             </div>
-            <span className="cart-text hide-on-mobile">Cart</span>
+            <div className="nav-cart-text-wrap hide-on-mobile">
+              <span className="cart-text">Cart</span>
+              {lowStockCount > 0 && (
+                <span className="nav-low-stock-chip" aria-label={`${lowStockCount} low stock items in cart`}>
+                  Low stock: {lowStockCount}
+                </span>
+              )}
+            </div>
           </Link>
         </div>
       </div>

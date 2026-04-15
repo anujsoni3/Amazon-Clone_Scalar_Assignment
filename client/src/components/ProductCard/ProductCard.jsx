@@ -7,7 +7,7 @@ import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../ut
 import { formatPrice } from '../../utils/price';
 import './ProductCard.css';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, stockUpdated = false }) => {
   const { addItemToCart } = useCart();
   const navigate = useNavigate();
   const [actionState, setActionState] = useState('idle');
@@ -36,7 +36,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <div
-      className="product-card"
+      className={`product-card ${stockUpdated ? 'stock-updated' : ''}`}
       role="link"
       tabIndex={0}
       onClick={() => navigate(`/products/${product.id}`)}
@@ -66,6 +66,7 @@ const ProductCard = ({ product }) => {
         <div className="pc-badge-row">
           <span className="pc-choice-badge">Amazon's Choice</span>
           <span className="pc-prime">prime</span>
+          {stockUpdated && <span className="pc-stock-badge">Stock updated</span>}
         </div>
 
         <Link to={`/products/${product.id}`} className="pc-title-link">

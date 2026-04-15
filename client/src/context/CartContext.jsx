@@ -41,6 +41,7 @@ export const CartProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState(null);
   const [useLocalCart, setUseLocalCart] = useState(false);
+  const [inventoryPulseAt, setInventoryPulseAt] = useState(null);
 
   // Fetch cart on mount
   useEffect(() => {
@@ -104,6 +105,7 @@ export const CartProvider = ({ children }) => {
     };
 
     const handleInventoryUpdated = () => {
+      setInventoryPulseAt(Date.now());
       if (!useLocalCart) {
         fetchCart();
       }
@@ -211,6 +213,7 @@ export const CartProvider = ({ children }) => {
   };
 
   const clearNotice = () => setNotice(null);
+  const lowStockItems = cartItems.filter((item) => Number(item?.product?.stockQty || 0) > 0 && Number(item?.product?.stockQty || 0) <= 3);
 
   return (
     <CartContext.Provider value={{
@@ -224,7 +227,10 @@ export const CartProvider = ({ children }) => {
       updateQuantity,
       removeItem,
       fetchCart,
-      clearCartLocally
+      clearCartLocally,
+      lowStockItems,
+      lowStockCount: lowStockItems.length,
+      inventoryPulseAt
     }}>
       {children}
     </CartContext.Provider>

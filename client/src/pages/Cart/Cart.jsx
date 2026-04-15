@@ -7,7 +7,7 @@ import { formatPrice } from '../../utils/price';
 import './Cart.css';
 
 const Cart = () => {
-  const { cartItems, cartSummary, loading } = useCart();
+  const { cartItems, cartSummary, loading, lowStockItems, inventoryPulseAt } = useCart();
   const navigate = useNavigate();
   const freeDeliveryThreshold = 499;
   const amountLeft = Math.max(freeDeliveryThreshold - cartSummary.subtotal, 0);
@@ -47,6 +47,17 @@ const Cart = () => {
       {cartItems.length > 0 && (
         <div className="cart-sidebar">
           <div className="cart-summary-box">
+            {lowStockItems.length > 0 && (
+              <div className={`cart-low-stock ${inventoryPulseAt ? 'cart-low-stock-pulse' : ''}`}>
+                <strong>{lowStockItems.length} item{lowStockItems.length > 1 ? 's are' : ' is'} running low</strong>
+                <ul>
+                  {lowStockItems.slice(0, 3).map((item) => (
+                    <li key={item.id}>{item.product.name} ({item.product.stockQty} left)</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div className="cart-free-shipping">
               <span className="success-icon">✓</span>
               <div>

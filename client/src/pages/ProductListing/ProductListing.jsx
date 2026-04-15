@@ -31,6 +31,7 @@ const ProductListing = () => {
   const [brandStats, setBrandStats] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
+  const [recentlyUpdatedIds, setRecentlyUpdatedIds] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -203,6 +204,8 @@ const ProductListing = () => {
 
     if (visibleIds.length === 0) return;
 
+    setRecentlyUpdatedIds((prev) => [...new Set([...prev, ...visibleIds])]);
+
     try {
       const refreshed = await Promise.all(
         visibleIds.map(async (productId) => {
@@ -219,6 +222,10 @@ const ProductListing = () => {
       if (byId.size === 0) return;
 
       setProducts((prev) => prev.map((product) => byId.get(product.id) || product));
+
+      window.setTimeout(() => {
+        setRecentlyUpdatedIds((prev) => prev.filter((idValue) => !visibleIds.includes(idValue)));
+      }, 1600);
     } catch (error) {
       console.error('Realtime product refresh failed:', error);
     }
@@ -374,7 +381,7 @@ const ProductListing = () => {
           <div className="pl-grid">
             {filteredProducts.length > 0 ? (
               filteredProducts.map(product => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.id} product={product} stockUpdated={recentlyUpdatedIds.includes(product.id)} />
               ))
             ) : (
               <div className="no-results">

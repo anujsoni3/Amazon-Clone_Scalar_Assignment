@@ -36,6 +36,8 @@ const ProductDetail = () => {
   const [reviewSort, setReviewSort] = useState('recent');
   const [reviewMediaFilter, setReviewMediaFilter] = useState('all');
   const [loadingReviews, setLoadingReviews] = useState(true);
+  const [stockJustUpdated, setStockJustUpdated] = useState(false);
+  const [updatedSuggestionIds, setUpdatedSuggestionIds] = useState([]);
 
   const fallbackImage = useMemo(() => getSizedFallback(800, 600), []);
 
@@ -158,7 +160,14 @@ const ProductDetail = () => {
 
       if (normalized.includes(productId)) {
         refreshCurrentProduct();
+        setStockJustUpdated(true);
+        window.setTimeout(() => setStockJustUpdated(false), 1600);
       }
+
+      setUpdatedSuggestionIds((prev) => [...new Set([...prev, ...normalized])]);
+      window.setTimeout(() => {
+        setUpdatedSuggestionIds((prev) => prev.filter((itemId) => !normalized.includes(itemId)));
+      }, 1600);
 
       refreshSuggestions(normalized);
     };
@@ -398,7 +407,7 @@ const ProductDetail = () => {
             <span className="pd-pin">📍</span> Deliver to Anuj - Mumbai 400001
           </div>
 
-          <h3 className={`pd-stock ${product.stockQty > 0 ? 'in-stock' : 'out-stock'}`}>
+          <h3 className={`pd-stock ${product.stockQty > 0 ? 'in-stock' : 'out-stock'} ${stockJustUpdated ? 'pd-stock-updated' : ''}`}>
             {product.stockQty > 0 ? 'In stock' : 'Currently unavailable'}
           </h3>
 
@@ -453,7 +462,7 @@ const ProductDetail = () => {
         <h3>Customers who viewed this item also viewed</h3>
         <div className="pd-suggestions-row">
           {suggestions.slice(0, 5).map((suggestion) => (
-            <Link key={suggestion.id} to={`/products/${suggestion.id}`} className="pd-suggestion-card">
+            <Link key={suggestion.id} to={`/products/${suggestion.id}`} className={`pd-suggestion-card ${updatedSuggestionIds.includes(suggestion.id) ? 'pd-suggestion-updated' : ''}`}>
               <img src={normalizeImageUrl(suggestion.images?.[0]?.imageUrl, fallbackImage)} alt={suggestion.name} onError={(event) => withImageFallback(event, fallbackImage)} />
               <span>{suggestion.name}</span>
             </Link>

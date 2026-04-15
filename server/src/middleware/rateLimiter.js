@@ -1,3 +1,5 @@
+const { getReadyRedis } = require('../lib/redisClient');
+
 const buckets = new Map();
 
 const nowMs = () => Date.now();
@@ -18,13 +20,36 @@ const createRateLimiter = ({
   keyGenerator = defaultKeyGenerator,
   message = 'Too many requests. Please try again shortly.',
 } = {}) => {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     const timestamp = nowMs();
+    const key = keyGenerator(req);
+
+    const redis = getReadyRedis();
+    if (redis) {
+      try {
+        const redisKey = `rate:${key}`;
+        const count = await redis.incr(redisKey);
+        if (count === 1) {
+          await redis.pexpire(redisKey, windowMs);
+        }
+
+        if (count > max) {
+          const ttlMs = await redis.pttl(redisKey);
+          const retryAfterSec = Math.max(1, Math.ceil((ttlMs > 0 ? ttlMs : windowMs) / 1000));
+          res.setHeader('Retry-After', retryAfterSec);
+          return res.status(429).json({ success: false, error: message });
+        }
+
+        return next();
+      } catch {
+        // fall through to in-memory limiting if Redis operation fails
+      }
+    }
+
     if (buckets.size > 20_000) {
       cleanupExpired(timestamp);
     }
 
-    const key = keyGenerator(req);
     const current = buckets.get(key);
 
     if (!current || current.resetAt <= timestamp) {

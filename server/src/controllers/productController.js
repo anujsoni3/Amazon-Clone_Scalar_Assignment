@@ -8,7 +8,7 @@ const { getCachedValue, setCachedValue } = require('../lib/queryCache');
 const getProducts = async (req, res, next) => {
   try {
     const cacheKey = `products:list:${JSON.stringify(req.query || {})}`;
-    const cached = getCachedValue(cacheKey);
+    const cached = await getCachedValue(cacheKey);
     if (cached) {
       return res.json({ ...cached, cached: true });
     }
@@ -91,7 +91,7 @@ const getProducts = async (req, res, next) => {
       },
     };
 
-    setCachedValue(cacheKey, payload, 15_000);
+    await setCachedValue(cacheKey, payload, 15_000);
     res.json(payload);
   } catch (err) {
     next(err);
@@ -106,7 +106,7 @@ const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const cacheKey = `products:detail:${id}`;
-    const cached = getCachedValue(cacheKey);
+    const cached = await getCachedValue(cacheKey);
     if (cached) {
       return res.json({ ...cached, cached: true });
     }
@@ -124,7 +124,7 @@ const getProductById = async (req, res, next) => {
     }
 
     const payload = { success: true, data: product };
-    setCachedValue(cacheKey, payload, 15_000);
+    await setCachedValue(cacheKey, payload, 15_000);
     res.json(payload);
   } catch (err) {
     next(err);
