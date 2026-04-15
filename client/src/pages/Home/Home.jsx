@@ -306,15 +306,15 @@ const Home = () => {
 
         <div className="category-row">
           {categories.slice(0, 4).map(category => (
-            <div key={category.id} className="category-card">
+            <Link key={category.id} to={`/products?category=${category.slug}`} className="category-card category-card-link">
               <h2>{category.name}</h2>
               <div className="category-card-image">
                 <MultiSourceImage sources={getCategoryThemeImages(category.slug)} alt={category.name} />
               </div>
               <div className="category-card-inner">
-                 <Link to={`/products?category=${category.slug}`} className="category-link">Shop now</Link>
+                <span className="category-link">Shop now</span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
