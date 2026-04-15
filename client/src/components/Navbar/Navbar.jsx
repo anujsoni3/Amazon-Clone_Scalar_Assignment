@@ -67,6 +67,11 @@ const Navbar = () => {
             <span className="nav-line-2">& Orders</span>
           </Link>
 
+          <Link to="/wishlist" className="nav-item nav-border hide-on-mobile">
+            <span className="nav-line-1">Your</span>
+            <span className="nav-line-2">Wishlist</span>
+          </Link>
+
           <Link to="/cart" className="nav-cart nav-border">
             <div className="cart-icon-container">
               <span className="cart-count">{cartSummary?.totalQty || 0}</span>

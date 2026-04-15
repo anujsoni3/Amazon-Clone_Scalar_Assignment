@@ -13,6 +13,7 @@ import Cart from './pages/Cart/Cart';
 import Checkout from './pages/Checkout/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation/OrderConfirmation';
 import OrderHistory from './pages/OrderHistory/OrderHistory';
+import Wishlist from './pages/Wishlist/Wishlist';
 
 import './styles/layout.css';
 
@@ -47,6 +48,7 @@ function AppLayout() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-confirmation/:id" element={<OrderConfirmation />} />
           <Route path="/orders/history" element={<OrderHistory />} />
+          <Route path="/wishlist" element={<Wishlist />} />
         </Routes>
       </main>
 

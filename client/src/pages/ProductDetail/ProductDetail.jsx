@@ -22,6 +22,9 @@ const ProductDetail = () => {
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [wishlisted, setWishlisted] = useState(false);
+  const [zoomActive, setZoomActive] = useState(false);
+  const [zoomPoint, setZoomPoint] = useState({ x: 50, y: 50 });
+  const [openSpecSection, setOpenSpecSection] = useState('features');
 
   const fallbackImage =
     'data:image/svg+xml;utf8,' +
@@ -168,6 +171,36 @@ const ProductDetail = () => {
     day: 'numeric',
   });
 
+  const reviewSource = reviews.length > 0 ? reviews : [
+    { id: 'sample-1', rating: 5, title: 'Works exactly as expected', comment: 'Great value, fast delivery, and the product matches the description.', user: { name: 'Anuj' }, createdAt: new Date().toISOString(), verified: true },
+    { id: 'sample-2', rating: 4, title: 'Good quality for the price', comment: 'Feels sturdy and is easy to use. Packaging could be better, but the item is solid.', user: { name: 'Neha' }, createdAt: new Date().toISOString(), verified: true },
+  ];
+
+  const ratingBuckets = [5, 4, 3, 2, 1].map((star) => {
+    const count = reviewSource.filter((review) => Number(review.rating) === star).length;
+    const percentage = reviewSource.length ? Math.round((count / reviewSource.length) * 100) : 0;
+    return { star, count, percentage };
+  });
+
+  const averageRating = reviewSource.length
+    ? (reviewSource.reduce((sum, review) => sum + Number(review.rating || 0), 0) / reviewSource.length).toFixed(1)
+    : '0.0';
+
+  const specRows = [
+    { key: 'Brand', value: product.category?.name || 'Amazon Basics' },
+    { key: 'Model Name', value: product.name },
+    { key: 'Category', value: product.category?.name || 'General' },
+    { key: 'Availability', value: product.stockQty > 0 ? 'In stock' : 'Out of stock' },
+    { key: 'Rating', value: `${averageRating} out of 5` },
+  ];
+
+  const handleMainImageMove = (event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    setZoomPoint({ x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) });
+  };
+
   return (
     <div className="pd-page">
       <div className="pd-breadcrumb">
@@ -192,8 +225,18 @@ const ProductDetail = () => {
               </div>
             ))}
           </div>
-          <div className="pd-main-image">
-            <img src={activeImage || fallbackImage} alt={product.name} onError={(event) => { event.currentTarget.src = fallbackImage; }} />
+          <div
+            className={`pd-main-image ${zoomActive ? 'zoom-active' : ''}`}
+            onMouseMove={handleMainImageMove}
+            onMouseEnter={() => setZoomActive(true)}
+            onMouseLeave={() => setZoomActive(false)}
+          >
+            <img
+              src={activeImage || fallbackImage}
+              alt={product.name}
+              onError={(event) => { event.currentTarget.src = fallbackImage; }}
+              style={zoomActive ? { transformOrigin: `${zoomPoint.x}% ${zoomPoint.y}%` } : undefined}
+            />
           </div>
         </div>
 
@@ -320,38 +363,35 @@ const ProductDetail = () => {
       <section className="pd-reviews-section">
         <h3>Customer Reviews</h3>
 
-        {reviews.length === 0 ? (
-          <div className="pd-review-list">
-            {[
-              { id: 'sample-1', name: 'Anuj', rating: 5, title: 'Works exactly as expected', comment: 'Great value, fast delivery, and the product matches the description.' },
-              { id: 'sample-2', name: 'Neha', rating: 4, title: 'Good quality for the price', comment: 'Feels sturdy and is easy to use. Packaging could be better, but the item is solid.' },
-            ].map((review) => (
-              <article key={review.id} className="pd-review-card">
-                <div className="pd-review-head">
-                  <strong>{review.name}</strong>
-                  <span>Verified purchase</span>
-                </div>
-                <div className="pd-review-rating">Rating: {review.rating}/5</div>
-                <h4>{review.title}</h4>
-                <p>{review.comment}</p>
-              </article>
+        <div className="pd-review-summary">
+          <div className="pd-review-overall">
+            <div className="pd-review-score">{averageRating} out of 5</div>
+            <p>{reviewSource.length} global ratings</p>
+          </div>
+          <div className="pd-rating-bars">
+            {ratingBuckets.map((bucket) => (
+              <div key={bucket.star} className="pd-rating-row">
+                <span>{bucket.star} star</span>
+                <div className="pd-rating-track"><span style={{ width: `${bucket.percentage}%` }}></span></div>
+                <span>{bucket.percentage}%</span>
+              </div>
             ))}
           </div>
-        ) : (
-          <div className="pd-review-list">
-            {reviews.map((review) => (
-              <article key={review.id} className="pd-review-card">
-                <div className="pd-review-head">
-                  <strong>{review.user?.name || 'Customer'}</strong>
-                  <span>{new Date(review.createdAt).toLocaleDateString()}</span>
-                </div>
-                <div className="pd-review-rating">Rating: {review.rating}/5</div>
-                {review.title && <h4>{review.title}</h4>}
-                <p>{review.comment}</p>
-              </article>
-            ))}
-          </div>
-        )}
+        </div>
+
+        <div className="pd-review-list">
+          {reviewSource.map((review) => (
+            <article key={review.id} className="pd-review-card">
+              <div className="pd-review-head">
+                <strong>{review.user?.name || review.name || 'Customer'}</strong>
+                <span>{review.verified ? 'Verified purchase' : new Date(review.createdAt).toLocaleDateString()}</span>
+              </div>
+              <div className="pd-review-rating">Rating: {review.rating}/5</div>
+              {review.title && <h4>{review.title}</h4>}
+              <p>{review.comment}</p>
+            </article>
+          ))}
+        </div>
 
         {reviewEligibility.eligible ? (
           <form className="pd-review-form" onSubmit={handleReviewSubmit}>
@@ -392,6 +432,47 @@ const ProductDetail = () => {
         ) : (
           <p className="pd-review-note">Only verified purchasers can write a review for this product.</p>
         )}
+      </section>
+
+      <section className="pd-info-accordion">
+        <h3>Product information</h3>
+
+        <article className="pd-accordion-card">
+          <button type="button" className="pd-accordion-head" onClick={() => setOpenSpecSection(openSpecSection === 'features' ? '' : 'features')}>
+            Features & Specs
+            <span>{openSpecSection === 'features' ? '−' : '+'}</span>
+          </button>
+          {openSpecSection === 'features' && (
+            <div className="pd-accordion-body">
+              <ul>
+                <li>Premium quality build and verified stock guarantee.</li>
+                <li>Fast shipping with Amazon-style return protection.</li>
+                <li>Optimized for high reliability and daily use.</li>
+              </ul>
+            </div>
+          )}
+        </article>
+
+        <article className="pd-accordion-card">
+          <button type="button" className="pd-accordion-head" onClick={() => setOpenSpecSection(openSpecSection === 'details' ? '' : 'details')}>
+            Item details
+            <span>{openSpecSection === 'details' ? '−' : '+'}</span>
+          </button>
+          {openSpecSection === 'details' && (
+            <div className="pd-accordion-body">
+              <table className="pd-spec-table">
+                <tbody>
+                  {specRows.map((row) => (
+                    <tr key={row.key}>
+                      <th>{row.key}</th>
+                      <td>{row.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </article>
       </section>
 
       {/* Mobile Buy Box (shown at bottom on small screens) */}

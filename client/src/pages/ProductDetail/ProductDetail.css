@@ -90,6 +90,11 @@
   max-width: 100%;
   max-height: 500px;
   object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.pd-main-image.zoom-active img {
+  transform: scale(1.9);
 }
 
 /* Info */
@@ -413,6 +418,56 @@
   margin-bottom: 16px;
 }
 
+.pd-review-summary {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.pd-review-overall {
+  border: 1px solid #e7e7e7;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.pd-review-score {
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
+.pd-review-overall p {
+  color: #565959;
+  font-size: 13px;
+}
+
+.pd-rating-bars {
+  display: grid;
+  gap: 6px;
+}
+
+.pd-rating-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 44px;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+}
+
+.pd-rating-track {
+  height: 18px;
+  border: 1px solid #d5d9d9;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f7fafa;
+}
+
+.pd-rating-track span {
+  display: block;
+  height: 100%;
+  background: #ffa41c;
+}
+
 .pd-review-card {
   border: 1px solid #e7e7e7;
   border-radius: 8px;
@@ -490,6 +545,65 @@
   cursor: wait;
 }
 
+.pd-info-accordion {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.pd-info-accordion h3 {
+  margin-bottom: 12px;
+}
+
+.pd-accordion-card {
+  border: 1px solid #e7e7e7;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.pd-accordion-head {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: none;
+  background: #f7fafa;
+  padding: 12px 14px;
+  font-size: 17px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pd-accordion-body {
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.pd-accordion-body ul {
+  margin-left: 18px;
+}
+
+.pd-spec-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pd-spec-table th,
+.pd-spec-table td {
+  border-bottom: 1px solid #f0f2f2;
+  padding: 8px;
+  text-align: left;
+}
+
+.pd-spec-table th {
+  width: 220px;
+  color: #565959;
+}
+
 @media (max-width: 900px) {
   .pd-page {
     flex-direction: column;
@@ -536,5 +650,9 @@
 
   .pd-breadcrumb {
     overflow-x: auto;
+  }
+
+  .pd-review-summary {
+    grid-template-columns: 1fr;
   }
 }
