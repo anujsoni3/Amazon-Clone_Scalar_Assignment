@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, MapPin, Globe } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
@@ -7,6 +7,19 @@ import './Navbar.css';
 const Navbar = () => {
   const { cartSummary } = useCart();
   const navigate = useNavigate();
+  const [showShippingNotice, setShowShippingNotice] = useState(false);
+  const [showDealsNotice, setShowDealsNotice] = useState(false);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+
+  useEffect(() => {
+    const shown = sessionStorage.getItem('amazon-clone-nav-popups-shown');
+    if (shown) return;
+
+    setShowShippingNotice(true);
+    setShowDealsNotice(true);
+    setShowSignInPrompt(true);
+    sessionStorage.setItem('amazon-clone-nav-popups-shown', '1');
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -100,6 +113,69 @@ const Navbar = () => {
           </Link>
         </div>
       </div>
+
+      {showShippingNotice && (
+        <div className="nav-popup nav-popup-shipping hide-on-mobile" role="status" aria-live="polite">
+          <div className="nav-popup-arrow" />
+          <p>We're showing you items that ship to <strong>India</strong>. To see items that ship to a different country, change your delivery address.</p>
+          <div className="nav-popup-actions">
+            <button type="button" className="nav-popup-btn nav-popup-btn-muted" onClick={() => setShowShippingNotice(false)}>Dismiss</button>
+            <button
+              type="button"
+              className="nav-popup-btn nav-popup-btn-primary"
+              onClick={() => {
+                setShowShippingNotice(false);
+                navigate('/checkout');
+              }}
+            >
+              Change Address
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showDealsNotice && (
+        <div className="nav-popup nav-popup-deals hide-on-mobile" role="status" aria-live="polite">
+          <div className="nav-popup-arrow" />
+          <p>New: limited-time deals are live for your region. Check top-rated offers before they end.</p>
+          <div className="nav-popup-actions">
+            <button type="button" className="nav-popup-btn nav-popup-btn-muted" onClick={() => setShowDealsNotice(false)}>Dismiss</button>
+            <button
+              type="button"
+              className="nav-popup-btn nav-popup-btn-primary"
+              onClick={() => {
+                setShowDealsNotice(false);
+                navigate('/products?sort=rating');
+              }}
+            >
+              View Deals
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showSignInPrompt && (
+        <div className="nav-popup nav-popup-signin hide-on-mobile" role="dialog" aria-label="Sign in prompt">
+          <div className="nav-popup-arrow" />
+          <p className="nav-signin-title">See personalized recommendations</p>
+          <button
+            type="button"
+            className="nav-popup-btn nav-popup-btn-primary nav-signin-btn"
+            onClick={() => {
+              setShowSignInPrompt(false);
+              navigate('/orders/history');
+            }}
+          >
+            Sign in
+          </button>
+          <p className="nav-signin-subtext">
+            New customer?{' '}
+            <button type="button" className="nav-inline-link" onClick={() => setShowSignInPrompt(false)}>
+              Start here.
+            </button>
+          </p>
+        </div>
+      )}
     </header>
   );
 };

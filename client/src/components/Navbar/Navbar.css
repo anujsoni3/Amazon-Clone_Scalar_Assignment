@@ -197,6 +197,129 @@
   margin-bottom: 4px;
 }
 
+.nav-popup {
+  position: absolute;
+  top: 64px;
+  background: #ffffff;
+  color: #0f1111;
+  border: 1px solid #d5d9d9;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(15, 17, 17, 0.2);
+  padding: 12px 16px;
+  z-index: 70;
+  max-width: 520px;
+}
+
+.nav-popup p {
+  font-size: 16px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.nav-popup-arrow {
+  position: absolute;
+  top: -8px;
+  width: 14px;
+  height: 14px;
+  background: #ffffff;
+  border-left: 1px solid #d5d9d9;
+  border-top: 1px solid #d5d9d9;
+  transform: rotate(45deg);
+}
+
+.nav-popup-shipping {
+  left: 118px;
+  max-width: 480px;
+}
+
+.nav-popup-shipping .nav-popup-arrow {
+  left: 14px;
+}
+
+.nav-popup-deals {
+  left: 282px;
+  top: 108px;
+  max-width: 430px;
+}
+
+.nav-popup-deals .nav-popup-arrow {
+  left: 18px;
+}
+
+.nav-popup-signin {
+  right: 176px;
+  max-width: 260px;
+}
+
+.nav-popup-signin .nav-popup-arrow {
+  right: 28px;
+}
+
+.nav-popup-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.nav-popup-btn {
+  border-radius: 20px;
+  border: 1px solid #d5d9d9;
+  padding: 7px 14px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.nav-popup-btn-muted {
+  background: #f7fafa;
+  color: #0f1111;
+}
+
+.nav-popup-btn-muted:hover {
+  background: #edf2f2;
+}
+
+.nav-popup-btn-primary {
+  background: #ffd814;
+  border-color: #fcd200;
+  color: #0f1111;
+}
+
+.nav-popup-btn-primary:hover {
+  background: #f7ca00;
+}
+
+.nav-signin-title {
+  font-size: 14px !important;
+  font-weight: 700;
+  margin-bottom: 10px !important;
+}
+
+.nav-signin-btn {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.nav-signin-subtext {
+  font-size: 12px !important;
+  color: #565959;
+}
+
+.nav-inline-link {
+  border: none;
+  background: transparent;
+  color: #007185;
+  cursor: pointer;
+  padding: 0;
+  font-size: 12px;
+}
+
+.nav-inline-link:hover {
+  color: #c7511f;
+  text-decoration: underline;
+}
+
 /* Secondary Nav */
 .navbar-secondary {
   background-color: var(--color-nav-secondary);
