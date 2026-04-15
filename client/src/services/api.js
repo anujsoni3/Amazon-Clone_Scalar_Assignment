@@ -25,7 +25,10 @@ export const getCategories = () => api.get('/categories');
 
 export const getCart = () => api.get('/cart');
 export const addToCart = (productId, quantity) => api.post('/cart', { productId, quantity });
-export const updateCartItem = (itemId, quantity) => api.put(`/cart/${itemId}`, { quantity });
+export const updateCartItem = (itemId, quantity, expectedQuantity) => api.put(`/cart/${itemId}`, {
+  quantity,
+  expectedQuantity,
+});
 export const removeFromCart = (itemId) => api.delete(`/cart/${itemId}`);
 
 export const placeOrder = (shippingAddress, idempotencyKey) => api.post('/orders', { shippingAddress }, withIdempotency(idempotencyKey));

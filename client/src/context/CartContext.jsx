@@ -143,7 +143,8 @@ export const CartProvider = ({ children }) => {
     }
 
     try {
-      await api.updateCartItem(itemId, quantity);
+      const currentItem = cartItems.find((item) => item.id === itemId);
+      await api.updateCartItem(itemId, quantity, currentItem?.quantity);
       await fetchCart();
     } catch (error) {
       console.error('Error updating quantity', error);

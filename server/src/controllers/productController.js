@@ -1,4 +1,5 @@
 const prisma = require('../lib/prisma');
+const { getCachedValue, setCachedValue } = require('../lib/queryCache');
 
 /**
  * GET /api/products
@@ -6,6 +7,12 @@ const prisma = require('../lib/prisma');
  */
 const getProducts = async (req, res, next) => {
   try {
+    const cacheKey = `products:list:${JSON.stringify(req.query || {})}`;
+    const cached = getCachedValue(cacheKey);
+    if (cached) {
+      return res.json({ ...cached, cached: true });
+    }
+
     const {
       q = '',
       category = '',
@@ -73,7 +80,7 @@ const getProducts = async (req, res, next) => {
       prisma.product.count({ where }),
     ]);
 
-    res.json({
+    const payload = {
       success: true,
       data: products,
       pagination: {
@@ -82,7 +89,10 @@ const getProducts = async (req, res, next) => {
         limit: limitNum,
         totalPages: Math.ceil(total / limitNum),
       },
-    });
+    };
+
+    setCachedValue(cacheKey, payload, 15_000);
+    res.json(payload);
   } catch (err) {
     next(err);
   }
@@ -95,6 +105,11 @@ const getProducts = async (req, res, next) => {
 const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const cacheKey = `products:detail:${id}`;
+    const cached = getCachedValue(cacheKey);
+    if (cached) {
+      return res.json({ ...cached, cached: true });
+    }
 
     const product = await prisma.product.findUnique({
       where: { id: parseInt(id) },
@@ -108,7 +123,9 @@ const getProductById = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'Product not found' });
     }
 
-    res.json({ success: true, data: product });
+    const payload = { success: true, data: product };
+    setCachedValue(cacheKey, payload, 15_000);
+    res.json(payload);
   } catch (err) {
     next(err);
   }

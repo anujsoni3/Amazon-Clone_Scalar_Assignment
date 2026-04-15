@@ -9,6 +9,7 @@ const orderRoutes = require('./routes/orders');
 const wishlistRoutes = require('./routes/wishlist');
 const reviewRoutes = require('./routes/reviews');
 const errorHandler = require('./middleware/errorHandler');
+const { createRateLimiter } = require('./middleware/rateLimiter');
 
 const app = express();
 
@@ -18,6 +19,27 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
+app.set('trust proxy', 1);
+
+const apiLimiter = createRateLimiter({
+  windowMs: 60_000,
+  max: 200,
+  message: 'Too many API requests. Please slow down and retry in a minute.',
+});
+
+const writeLimiter = createRateLimiter({
+  windowMs: 60_000,
+  max: 40,
+  message: 'Too many write operations. Please try again shortly.',
+});
+
+const checkoutLimiter = createRateLimiter({
+  windowMs: 60_000,
+  max: 10,
+  message: 'Too many checkout attempts. Please retry after a short wait.',
+});
+
+app.use('/api', apiLimiter);
 
 // ── Health check ──────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
@@ -27,10 +49,10 @@ app.get('/api/health', (req, res) => {
 // ── Routes ────────────────────────────────────────────────────────────
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/wishlist', wishlistRoutes);
-app.use('/api/reviews', reviewRoutes);
+app.use('/api/cart', writeLimiter, cartRoutes);
+app.use('/api/orders', checkoutLimiter, orderRoutes);
+app.use('/api/wishlist', writeLimiter, wishlistRoutes);
+app.use('/api/reviews', writeLimiter, reviewRoutes);
 
 // ── 404 handler ───────────────────────────────────────────────────────
 app.use((req, res) => {

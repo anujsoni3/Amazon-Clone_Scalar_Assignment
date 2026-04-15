@@ -1,4 +1,5 @@
 const prisma = require('../lib/prisma');
+const { clearCacheByPrefix } = require('../lib/queryCache');
 
 const DEFAULT_USER_ID = 1;
 
@@ -66,6 +67,8 @@ const addToWishlist = async (req, res, next) => {
       },
     });
 
+    clearCacheByPrefix('products:');
+
     res.status(201).json({ success: true, data: saved });
   } catch (err) {
     if (isDatabaseUnavailableError(err)) {
@@ -91,6 +94,7 @@ const removeFromWishlist = async (req, res, next) => {
     }
 
     await prisma.wishlist.delete({ where: { id: parseInt(itemId) } });
+    clearCacheByPrefix('products:');
     res.json({ success: true, message: 'Item removed from wishlist' });
   } catch (err) {
     if (isDatabaseUnavailableError(err)) {

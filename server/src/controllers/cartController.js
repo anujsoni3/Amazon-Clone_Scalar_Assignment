@@ -1,4 +1,5 @@
 const prisma = require('../lib/prisma');
+const { clearCacheByPrefix } = require('../lib/queryCache');
 
 const DEFAULT_USER_ID = 1;
 
@@ -48,14 +49,20 @@ const getCart = async (req, res, next) => {
 const addToCart = async (req, res, next) => {
   try {
     const { productId, quantity = 1 } = req.body;
+    const parsedProductId = parseInt(productId, 10);
+    const parsedQty = parseInt(quantity, 10);
 
-    if (!productId) {
+    if (!parsedProductId || Number.isNaN(parsedProductId)) {
       return res.status(400).json({ success: false, error: 'productId is required' });
+    }
+
+    if (!parsedQty || Number.isNaN(parsedQty) || parsedQty < 1) {
+      return res.status(400).json({ success: false, error: 'Quantity must be at least 1' });
     }
 
     // Check product exists and has stock
     const product = await prisma.product.findUnique({
-      where: { id: parseInt(productId) },
+      where: { id: parsedProductId },
     });
 
     if (!product) {
@@ -69,15 +76,15 @@ const addToCart = async (req, res, next) => {
     // Upsert: add new or increment existing
     const cartItem = await prisma.cartItem.upsert({
       where: {
-        userId_productId: { userId: DEFAULT_USER_ID, productId: parseInt(productId) },
+        userId_productId: { userId: DEFAULT_USER_ID, productId: parsedProductId },
       },
       update: {
-        quantity: { increment: parseInt(quantity) },
+        quantity: { increment: parsedQty },
       },
       create: {
         userId: DEFAULT_USER_ID,
-        productId: parseInt(productId),
-        quantity: parseInt(quantity),
+        productId: parsedProductId,
+        quantity: parsedQty,
       },
       include: {
         product: {
@@ -85,6 +92,8 @@ const addToCart = async (req, res, next) => {
         },
       },
     });
+
+    clearCacheByPrefix('products:');
 
     res.status(201).json({ success: true, data: cartItem });
   } catch (err) {
@@ -100,29 +109,53 @@ const addToCart = async (req, res, next) => {
 const updateCartItem = async (req, res, next) => {
   try {
     const { itemId } = req.params;
-    const { quantity } = req.body;
+    const { quantity, expectedQuantity } = req.body;
+    const parsedItemId = parseInt(itemId, 10);
+    const parsedQty = parseInt(quantity, 10);
 
-    if (!quantity || quantity < 1) {
+    if (!parsedQty || Number.isNaN(parsedQty) || parsedQty < 1) {
       return res.status(400).json({ success: false, error: 'Quantity must be at least 1' });
     }
 
     const cartItem = await prisma.cartItem.findFirst({
-      where: { id: parseInt(itemId), userId: DEFAULT_USER_ID },
+      where: { id: parsedItemId, userId: DEFAULT_USER_ID },
     });
 
     if (!cartItem) {
       return res.status(404).json({ success: false, error: 'Cart item not found' });
     }
 
-    const updated = await prisma.cartItem.update({
-      where: { id: parseInt(itemId) },
-      data: { quantity: parseInt(quantity) },
+    const expectedQtyParsed = Number.isNaN(parseInt(expectedQuantity, 10))
+      ? null
+      : parseInt(expectedQuantity, 10);
+
+    if (expectedQtyParsed !== null && cartItem.quantity !== expectedQtyParsed) {
+      return res.status(409).json({ success: false, error: 'Cart item changed. Please refresh and retry.' });
+    }
+
+    const updateResult = await prisma.cartItem.updateMany({
+      where: {
+        id: parsedItemId,
+        userId: DEFAULT_USER_ID,
+        ...(expectedQtyParsed !== null ? { quantity: expectedQtyParsed } : {}),
+      },
+      data: { quantity: parsedQty },
+    });
+
+    if (updateResult.count === 0) {
+      return res.status(409).json({ success: false, error: 'Cart item changed. Please refresh and retry.' });
+    }
+
+    const updated = await prisma.cartItem.findFirst({
+      where: { id: parsedItemId, userId: DEFAULT_USER_ID },
       include: {
         product: {
           include: { images: { where: { isPrimary: true }, take: 1 } },
         },
       },
     });
+
+    clearCacheByPrefix('products:');
 
     res.json({ success: true, data: updated });
   } catch (err) {
@@ -137,16 +170,19 @@ const updateCartItem = async (req, res, next) => {
 const removeFromCart = async (req, res, next) => {
   try {
     const { itemId } = req.params;
+    const parsedItemId = parseInt(itemId, 10);
 
     const cartItem = await prisma.cartItem.findFirst({
-      where: { id: parseInt(itemId), userId: DEFAULT_USER_ID },
+      where: { id: parsedItemId, userId: DEFAULT_USER_ID },
     });
 
     if (!cartItem) {
       return res.status(404).json({ success: false, error: 'Cart item not found' });
     }
 
-    await prisma.cartItem.delete({ where: { id: parseInt(itemId) } });
+    await prisma.cartItem.delete({ where: { id: parsedItemId } });
+
+    clearCacheByPrefix('products:');
 
     res.json({ success: true, message: 'Item removed from cart' });
   } catch (err) {

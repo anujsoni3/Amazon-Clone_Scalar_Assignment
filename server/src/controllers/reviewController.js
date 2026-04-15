@@ -1,4 +1,5 @@
 const prisma = require('../lib/prisma');
+const { clearCacheByPrefix } = require('../lib/queryCache');
 
 const DEFAULT_USER_ID = 1;
 
@@ -176,6 +177,8 @@ const upsertReview = async (req, res, next) => {
         reviewCount: aggregates._count.rating,
       },
     });
+
+    clearCacheByPrefix('products:');
 
     res.status(201).json({ success: true, data: review });
   } catch (err) {

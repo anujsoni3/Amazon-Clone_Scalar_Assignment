@@ -1,5 +1,6 @@
 const prisma = require('../lib/prisma');
 const { Prisma } = require('@prisma/client');
+const { clearCacheByPrefix } = require('../lib/queryCache');
 
 const DEFAULT_USER_ID = 1;
 const SHIPPING_THRESHOLD = 499; // Free shipping above ₹499
@@ -137,6 +138,8 @@ const placeOrder = async (req, res, next) => {
       return newOrder;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 
+    clearCacheByPrefix('products:');
+
     res.status(201).json({ success: true, data: order });
   } catch (err) {
     if (err?.code === 'P2002') {
@@ -227,6 +230,8 @@ const placeBuyNowOrder = async (req, res, next) => {
 
       return newOrder;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+
+    clearCacheByPrefix('products:');
 
     res.status(201).json({ success: true, data: order });
   } catch (err) {
