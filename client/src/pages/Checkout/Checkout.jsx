@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import * as api from '../../services/api';
 import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
@@ -11,6 +11,8 @@ const FALLBACK_IMAGE = getSizedFallback(160, 160);
 const Checkout = () => {
   const { cartItems, cartSummary, clearCartLocally } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
+  const buyNowItem = location.state?.buyNowItem || null;
 
   const [address, setAddress] = useState({
     name: '',
@@ -26,8 +28,16 @@ const Checkout = () => {
   const [activeStep, setActiveStep] = useState(1);
   const [selectedPayment, setSelectedPayment] = useState('card');
 
-  // If cart is empty, redirect back
-  if (cartItems.length === 0) {
+  const checkoutItems = buyNowItem ? [buyNowItem] : cartItems;
+  const checkoutSubtotal = buyNowItem
+    ? parseFloat(buyNowItem.product.price) * buyNowItem.quantity
+    : cartSummary.subtotal;
+  const checkoutTotalQty = buyNowItem
+    ? buyNowItem.quantity
+    : cartSummary.totalQty;
+
+  // If checkout has no items, redirect back
+  if (checkoutItems.length === 0) {
     navigate('/cart');
     return null;
   }
@@ -64,9 +74,18 @@ const Checkout = () => {
     setSubmitting(true);
     
     try {
-      const res = await api.placeOrder(address);
+      const res = buyNowItem
+        ? await api.placeBuyNowOrder({
+            productId: buyNowItem.productId || buyNowItem.product.id,
+            quantity: buyNowItem.quantity,
+            shippingAddress: address,
+          })
+        : await api.placeOrder(address);
+
       if (res.data.success) {
-        clearCartLocally();
+        if (!buyNowItem) {
+          clearCartLocally();
+        }
         navigate(`/order-confirmation/${res.data.data.id}`);
       }
     } catch (err) {
@@ -77,13 +96,17 @@ const Checkout = () => {
     }
   };
 
-  const shippingCost = cartSummary.subtotal >= 499 ? 0 : 49;
-  const total = cartSummary.subtotal + shippingCost;
+  const shippingCost = checkoutSubtotal >= 499 ? 0 : 49;
+  const total = checkoutSubtotal + shippingCost;
 
   return (
     <div className="checkout-page">
       <div className="checkout-main">
-        <h1>Checkout ({cartSummary.totalQty} items)</h1>
+        <div className="checkout-heading-block">
+          <p className="checkout-eyebrow">Secure checkout</p>
+          <h1>{buyNowItem ? `Buy Now Checkout (${checkoutTotalQty} item)` : `Checkout (${checkoutTotalQty} items)`}</h1>
+          <p className="checkout-intro">Review your delivery address, choose a payment method, and place your order.</p>
+        </div>
         
         <section className={`checkout-section ${activeStep === 1 ? 'active' : ''}`}>
           <button type="button" className="checkout-section-head" onClick={() => setActiveStep(1)}>
@@ -123,6 +146,10 @@ const Checkout = () => {
               <div className="form-group">
                 <label>State</label>
                 <input type="text" name="state" required value={address.state} onChange={handleChange} />
+              </div>
+
+              <div className="checkout-help-text">
+                We will use this address to calculate shipping and delivery availability.
               </div>
 
               <button type="button" className="step-action-btn" onClick={continueToPayment}>Use this address</button>
@@ -171,6 +198,10 @@ const Checkout = () => {
               {selectedPayment === 'cod' && <p className="payment-help">Pay by cash upon delivery. Additional verification may apply.</p>}
             </div>
 
+            <div className="payment-note">
+              You can change your payment method before placing the order.
+            </div>
+
             <button type="button" className="step-action-btn" onClick={continueToReview}>Use this payment method</button>
           </div>
           )}
@@ -184,9 +215,20 @@ const Checkout = () => {
 
           {activeStep === 3 && (
             <div className="checkout-section-content">
+              <div className="review-summary-top">
+                <div>
+                  <h3>Items in your order</h3>
+                  <p>{checkoutTotalQty} item{checkoutTotalQty !== 1 ? 's' : ''} ready for delivery.</p>
+                </div>
+                <div className="review-summary-total">
+                  <span>Order total</span>
+                  <strong>₹{formatPrice(total).full}</strong>
+                </div>
+              </div>
+
               <div className="checkout-items">
-                {cartItems.map((item) => (
-                  <div key={item.id} className="checkout-item">
+                {checkoutItems.map((item, index) => (
+                  <div key={item.id || `${item.productId || item.product.id}-${index}`} className="checkout-item">
                     <img
                       src={normalizeImageUrl(item.product.images?.[0]?.imageUrl, FALLBACK_IMAGE)}
                       alt={item.product.name}
@@ -208,6 +250,10 @@ const Checkout = () => {
 
       <div className="checkout-sidebar">
         <div className="checkout-summary-box">
+          <div className="summary-title-row">
+            <h3>Order Summary</h3>
+            <span>{checkoutTotalQty} item{checkoutTotalQty !== 1 ? 's' : ''}</span>
+          </div>
           <button 
             type="button"
             className="btn pd-btn-add place-order-btn"
@@ -217,13 +263,14 @@ const Checkout = () => {
             {submitting ? 'Processing...' : 'Place your order'}
           </button>
           <p className="terms-text">By placing your order, you agree to Amazon Clone's privacy notice and conditions of use.</p>
+          <div className="checkout-returns-note">This order is covered by standard return eligibility for the selected items.</div>
           
           <hr/>
           
           <h3>Order Summary</h3>
           <div className="summary-row">
             <span>Items:</span>
-            <span>₹{formatPrice(cartSummary.subtotal).full}</span>
+            <span>₹{formatPrice(checkoutSubtotal).full}</span>
           </div>
           <div className="summary-row">
             <span>Delivery:</span>
@@ -231,7 +278,7 @@ const Checkout = () => {
           </div>
           <div className="summary-row">
             <span>Total:</span>
-            <span>₹{formatPrice(cartSummary.subtotal + shippingCost).full}</span>
+            <span>₹{formatPrice(checkoutSubtotal + shippingCost).full}</span>
           </div>
           
           <hr/>

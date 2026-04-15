@@ -106,7 +106,7 @@ const OrderHistory = () => {
                       >
                         {addingItemId === item.productId ? 'Added to Cart!' : 'Add to Cart (Buy it again)'}
                       </button>
-                      <Link to={`/products/${item.productId}`} className="text-link write-review-link">
+                      <Link to={`/products/${item.productId}`} state={{ openReview: true }} className="text-link write-review-link">
                         Write a product review
                       </Link>
                     </div>

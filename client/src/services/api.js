@@ -16,6 +16,7 @@ export const updateCartItem = (itemId, quantity) => api.put(`/cart/${itemId}`, {
 export const removeFromCart = (itemId) => api.delete(`/cart/${itemId}`);
 
 export const placeOrder = (shippingAddress) => api.post('/orders', { shippingAddress });
+export const placeBuyNowOrder = (payload) => api.post('/orders/buy-now', payload);
 export const getOrderHistory = () => api.get('/orders/history');
 export const getOrderById = (id) => api.get(`/orders/${id}`);
 
@@ -23,7 +24,7 @@ export const getWishlist = () => api.get('/wishlist');
 export const addToWishlist = (productId) => api.post('/wishlist', { productId });
 export const removeFromWishlist = (itemId) => api.delete(`/wishlist/${itemId}`);
 
-export const getProductReviews = (productId) => api.get(`/reviews/product/${productId}`);
+export const getProductReviews = (productId, params) => api.get(`/reviews/product/${productId}`, { params });
 export const getReviewEligibility = (productId) => api.get(`/reviews/eligibility/${productId}`);
 export const upsertProductReview = (productId, payload) => api.post(`/reviews/product/${productId}`, payload);
 

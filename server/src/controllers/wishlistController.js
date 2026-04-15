@@ -1,7 +1,11 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../lib/prisma');
 
 const DEFAULT_USER_ID = 1;
+
+const isDatabaseUnavailableError = (err) => {
+  const message = String(err?.message || '');
+  return message.includes("Can't reach database server") || message.includes('P1001') || message.includes('P1002');
+};
 
 const getWishlist = async (req, res, next) => {
   try {
@@ -20,6 +24,9 @@ const getWishlist = async (req, res, next) => {
 
     res.json({ success: true, data: items });
   } catch (err) {
+    if (isDatabaseUnavailableError(err)) {
+      return res.json({ success: true, data: [], fallback: true });
+    }
     next(err);
   }
 };
@@ -61,6 +68,12 @@ const addToWishlist = async (req, res, next) => {
 
     res.status(201).json({ success: true, data: saved });
   } catch (err) {
+    if (isDatabaseUnavailableError(err)) {
+      return res.status(503).json({
+        success: false,
+        error: 'Wishlist is temporarily unavailable because the database connection could not be established.',
+      });
+    }
     next(err);
   }
 };
@@ -80,6 +93,12 @@ const removeFromWishlist = async (req, res, next) => {
     await prisma.wishlist.delete({ where: { id: parseInt(itemId) } });
     res.json({ success: true, message: 'Item removed from wishlist' });
   } catch (err) {
+    if (isDatabaseUnavailableError(err)) {
+      return res.status(503).json({
+        success: false,
+        error: 'Wishlist is temporarily unavailable because the database connection could not be established.',
+      });
+    }
     next(err);
   }
 };

@@ -11,11 +11,24 @@ const Navbar = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     const query = e.target.search.value;
+    const selectedCategory = e.target.category?.value || '';
+    const params = new URLSearchParams();
+
     if (query.trim()) {
-      navigate(`/products?q=${encodeURIComponent(query)}`);
-    } else {
-      navigate(`/products`);
+      params.set('q', query.trim());
     }
+
+    if (selectedCategory && selectedCategory !== 'all') {
+      params.set('category', selectedCategory);
+    }
+
+    const qs = params.toString();
+    if (qs) {
+      navigate(`/products?${qs}`);
+      return;
+    }
+
+    navigate('/products');
   };
 
   return (
@@ -37,8 +50,14 @@ const Navbar = () => {
         </div>
 
         <form className="nav-search" onSubmit={handleSearch}>
-          <select className="search-select hide-on-mobile">
-            <option>All</option>
+          <select className="search-select hide-on-mobile" name="category" defaultValue="all" aria-label="Search category">
+            <option value="all">All</option>
+            <option value="electronics">Electronics</option>
+            <option value="home-kitchen">Home & Kitchen</option>
+            <option value="beauty">Beauty</option>
+            <option value="books">Books</option>
+            <option value="clothing">Clothing</option>
+            <option value="amazon-basics">Amazon Basics</option>
           </select>
           <input 
             type="text" 

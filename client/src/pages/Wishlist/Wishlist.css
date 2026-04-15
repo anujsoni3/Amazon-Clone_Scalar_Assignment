@@ -113,6 +113,7 @@
   margin-top: 10px;
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .wishlist-btn {
@@ -131,6 +132,15 @@
 
 .wishlist-btn.primary:hover {
   background: #f7ca00;
+}
+
+.wishlist-btn.buy-now {
+  background: #ffa41c;
+  border-color: #ff8f00;
+}
+
+.wishlist-btn.buy-now:hover {
+  background: #fa8900;
 }
 
 .wishlist-btn:disabled {

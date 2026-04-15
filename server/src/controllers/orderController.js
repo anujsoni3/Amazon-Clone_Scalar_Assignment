@@ -1,8 +1,22 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../lib/prisma');
 
 const DEFAULT_USER_ID = 1;
 const SHIPPING_THRESHOLD = 499; // Free shipping above ₹499
+
+const validateShippingAddress = (shippingAddress, res) => {
+  const required = ['name', 'phone', 'addressLine1', 'city', 'state', 'pincode'];
+  for (const field of required) {
+    if (!shippingAddress?.[field]) {
+      res.status(400).json({
+        success: false,
+        error: `Shipping address field "${field}" is required`,
+      });
+      return false;
+    }
+  }
+
+  return true;
+};
 
 /**
  * POST /api/orders
@@ -13,15 +27,8 @@ const placeOrder = async (req, res, next) => {
   try {
     const { shippingAddress } = req.body;
 
-    // Validate shipping address
-    const required = ['name', 'phone', 'addressLine1', 'city', 'state', 'pincode'];
-    for (const field of required) {
-      if (!shippingAddress?.[field]) {
-        return res.status(400).json({
-          success: false,
-          error: `Shipping address field "${field}" is required`,
-        });
-      }
+    if (!validateShippingAddress(shippingAddress, res)) {
+      return;
     }
 
     // Fetch current cart
@@ -103,6 +110,87 @@ const placeOrder = async (req, res, next) => {
 };
 
 /**
+ * POST /api/orders/buy-now
+ * Body: { productId, quantity, shippingAddress }
+ * Creates an order for a single item without consuming full cart.
+ */
+const placeBuyNowOrder = async (req, res, next) => {
+  try {
+    const { shippingAddress, productId, quantity = 1 } = req.body;
+
+    if (!validateShippingAddress(shippingAddress, res)) {
+      return;
+    }
+
+    const parsedProductId = parseInt(productId);
+    const parsedQty = Math.max(1, parseInt(quantity));
+
+    if (!parsedProductId || Number.isNaN(parsedProductId)) {
+      return res.status(400).json({ success: false, error: 'Valid productId is required' });
+    }
+
+    const product = await prisma.product.findUnique({
+      where: { id: parsedProductId },
+    });
+
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Product not found' });
+    }
+
+    if (product.stockQty < parsedQty) {
+      return res.status(400).json({
+        success: false,
+        error: `Insufficient stock for "${product.name}"`,
+      });
+    }
+
+    const subtotal = parseFloat(product.price) * parsedQty;
+    const shippingCost = subtotal >= SHIPPING_THRESHOLD ? 0 : 49;
+    const total = subtotal + shippingCost;
+
+    const order = await prisma.$transaction(async (tx) => {
+      const newOrder = await tx.order.create({
+        data: {
+          userId: DEFAULT_USER_ID,
+          status: 'CONFIRMED',
+          subtotal: parseFloat(subtotal.toFixed(2)),
+          shippingCost,
+          total: parseFloat(total.toFixed(2)),
+          shippingAddress,
+          items: {
+            create: [{
+              productId: parsedProductId,
+              quantity: parsedQty,
+              unitPrice: product.price,
+            }],
+          },
+        },
+        include: {
+          items: {
+            include: {
+              product: {
+                include: { images: { where: { isPrimary: true }, take: 1 } },
+              },
+            },
+          },
+        },
+      });
+
+      await tx.product.update({
+        where: { id: parsedProductId },
+        data: { stockQty: { decrement: parsedQty } },
+      });
+
+      return newOrder;
+    });
+
+    res.status(201).json({ success: true, data: order });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
  * GET /api/orders/history
  * Returns all orders for the default user, newest first
  */
@@ -159,4 +247,4 @@ const getOrderById = async (req, res, next) => {
   }
 };
 
-module.exports = { placeOrder, getOrderHistory, getOrderById };
+module.exports = { placeOrder, placeBuyNowOrder, getOrderHistory, getOrderById };

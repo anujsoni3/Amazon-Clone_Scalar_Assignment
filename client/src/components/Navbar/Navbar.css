@@ -3,6 +3,8 @@
   color: white;
   height: 60px;
   padding: 0 8px;
+  position: relative;
+  z-index: 50;
 }
 
 .navbar-main-inner {
@@ -84,6 +86,8 @@
   border-radius: 4px;
   background-color: white;
   min-width: 200px;
+  position: relative;
+  z-index: 55;
 }
 
 .nav-search:focus-within {
@@ -102,6 +106,12 @@
   font-size: 12px;
   outline: none;
   cursor: pointer;
+  position: relative;
+  z-index: 60;
+}
+
+.search-select option {
+  color: #0f1111;
 }
 
 .search-input {
@@ -197,6 +207,8 @@
   padding: 0 10px;
   overflow-x: auto;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+  z-index: 10;
 }
 
 .navbar-secondary::-webkit-scrollbar {

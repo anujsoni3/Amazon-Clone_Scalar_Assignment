@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import CartItem from '../../components/CartItem/CartItem';
 import Loader from '../../components/Loader/Loader';
+import { formatPrice } from '../../utils/price';
 import './Cart.css';
 
 const Cart = () => {
@@ -38,7 +39,7 @@ const Cart = () => {
         
         {cartItems.length > 0 && (
           <div className="cart-subtotal-bottom">
-            Subtotal ({cartSummary.totalQty} items): <strong>₹{cartSummary.subtotal.toFixed(2)}</strong>
+            Subtotal ({cartSummary.totalQty} items): <strong>₹{formatPrice(cartSummary.subtotal).full}</strong>
           </div>
         )}
       </div>
@@ -57,7 +58,7 @@ const Cart = () => {
                   </>
                 ) : (
                   <>
-                    <span className="free-shipping-text">Add ₹{amountLeft.toFixed(2)} more for FREE Delivery.</span>
+                    <span className="free-shipping-text">Add ₹{formatPrice(amountLeft).full} more for FREE Delivery.</span>
                     <br/>
                     <span className="free-shipping-sub">Order above ₹{freeDeliveryThreshold} to unlock delivery savings.</span>
                   </>
@@ -73,7 +74,7 @@ const Cart = () => {
             </div>
             
             <div className="cart-subtotal">
-              Subtotal ({cartSummary.totalQty} items): <strong>₹{cartSummary.subtotal.toFixed(2)}</strong>
+              Subtotal ({cartSummary.totalQty} items): <strong>₹{formatPrice(cartSummary.subtotal).full}</strong>
             </div>
             
             <div className="cart-gift">

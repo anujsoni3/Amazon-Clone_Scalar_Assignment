@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import Loader from '../../components/Loader/Loader';
 import * as api from '../../services/api';
+import { demoCategories, demoProducts, getDemoProductsByCategory } from '../../data/demoCatalog';
 import './ProductListing.css';
 
 const COLOR_TOKENS = [
@@ -69,10 +70,17 @@ const ProductListing = () => {
 
   useEffect(() => {
     const fetchCats = async () => {
-      const res = await api.getCategories();
-      if (res.data.success) {
-        setCategories(res.data.data);
+      try {
+        const res = await api.getCategories();
+        if (res.data.success && res.data.data.length > 0) {
+          setCategories(res.data.data);
+          return;
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
       }
+
+      setCategories(demoCategories);
     };
     fetchCats();
   }, []);
@@ -92,11 +100,18 @@ const ProductListing = () => {
         });
         if (res.data.success) {
           const fetched = res.data.data || [];
-          setProducts(fetched);
-          setTotalResults(res.data.pagination?.total || fetched.length);
+          const nextProducts = fetched.length > 0 ? fetched : getDemoProductsByCategory(category || '').filter((product) => {
+            const queryMatch = q ? `${product.name} ${product.description}`.toLowerCase().includes(q.toLowerCase()) : true;
+            const ratingMatch = minRating ? Number(product.rating) >= Number(minRating) : true;
+            const priceMatch = (minPrice ? Number(product.price) >= Number(minPrice) : true) && (maxPrice ? Number(product.price) <= Number(maxPrice) : true);
+            return queryMatch && ratingMatch && priceMatch;
+          });
+
+          setProducts(nextProducts);
+          setTotalResults(res.data.pagination?.total || nextProducts.length || demoProducts.length);
 
           const brandMap = {};
-          fetched.forEach((product) => {
+          nextProducts.forEach((product) => {
             const brand = getBrandName(product);
             brandMap[brand] = (brandMap[brand] || 0) + 1;
           });
@@ -108,6 +123,15 @@ const ProductListing = () => {
         }
       } catch (err) {
         console.error('Error fetching products:', err);
+        const fallbackProducts = demoProducts.filter((product) => {
+          const queryMatch = q ? `${product.name} ${product.description}`.toLowerCase().includes(q.toLowerCase()) : true;
+          const categoryMatch = category ? product.category?.slug === category : true;
+          const ratingMatch = minRating ? Number(product.rating) >= Number(minRating) : true;
+          const priceMatch = (minPrice ? Number(product.price) >= Number(minPrice) : true) && (maxPrice ? Number(product.price) <= Number(maxPrice) : true);
+          return queryMatch && categoryMatch && ratingMatch && priceMatch;
+        });
+        setProducts(fallbackProducts);
+        setTotalResults(fallbackProducts.length || demoProducts.length);
       } finally {
         setLoading(false);
       }

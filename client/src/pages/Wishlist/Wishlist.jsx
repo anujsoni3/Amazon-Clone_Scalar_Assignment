@@ -1,15 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader/Loader';
 import { useCart } from '../../context/CartContext';
 import * as api from '../../services/api';
+import { demoWishlistItems } from '../../data/demoCatalog';
 import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
 import { formatPrice } from '../../utils/price';
 import './Wishlist.css';
 
+const LOCAL_WISHLIST_KEY = 'amazon-clone-local-wishlist';
+
+const readLocalWishlist = () => {
+  try {
+    const stored = localStorage.getItem(LOCAL_WISHLIST_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeLocalWishlist = (items) => {
+  localStorage.setItem(LOCAL_WISHLIST_KEY, JSON.stringify(items));
+};
+
 const FALLBACK_IMAGE = getSizedFallback(220, 220);
 
 const Wishlist = () => {
+  const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { addItemToCart, setNotice } = useCart();
@@ -18,12 +35,23 @@ const Wishlist = () => {
     try {
       const res = await api.getWishlist();
       if (res.data.success) {
-        setItems(res.data.data);
+        if (res.data.data.length > 0) {
+          setItems(res.data.data);
+          writeLocalWishlist(res.data.data);
+          return;
+        }
       }
     } catch (error) {
       console.error('Failed to fetch wishlist', error);
       setNotice({ type: 'error', message: 'Unable to load wishlist right now' });
     } finally {
+      const local = readLocalWishlist();
+      if (local?.length > 0) {
+        setItems(local);
+      } else {
+        setItems(demoWishlistItems);
+        writeLocalWishlist(demoWishlistItems);
+      }
       setLoading(false);
     }
   };
@@ -33,14 +61,16 @@ const Wishlist = () => {
   }, []);
 
   const handleRemove = async (itemId) => {
+    const nextItems = items.filter((item) => item.id !== itemId);
     try {
       await api.removeFromWishlist(itemId);
-      setItems((prev) => prev.filter((item) => item.id !== itemId));
       setNotice({ type: 'success', message: 'Removed from wishlist' });
     } catch (error) {
       console.error('Failed to remove from wishlist', error);
       setNotice({ type: 'error', message: 'Unable to remove item from wishlist' });
     }
+    setItems(nextItems);
+    writeLocalWishlist(nextItems);
   };
 
   const handleMoveToCart = async (item) => {
@@ -48,6 +78,19 @@ const Wishlist = () => {
     if (success) {
       await handleRemove(item.id);
     }
+  };
+
+  const handleBuyNow = (item) => {
+    navigate('/checkout', {
+      state: {
+        buyNowItem: {
+          id: `wishlist-buy-now-${item.id}`,
+          productId: item.product.id,
+          quantity: 1,
+          product: item.product,
+        },
+      },
+    });
   };
 
   if (loading) return <Loader fullPage />;
@@ -89,6 +132,9 @@ const Wishlist = () => {
                   <div className="wishlist-actions">
                     <button type="button" className="wishlist-btn primary" onClick={() => handleMoveToCart(item)} disabled={product.stockQty <= 0}>
                       Add to Cart
+                    </button>
+                    <button type="button" className="wishlist-btn buy-now" onClick={() => handleBuyNow(item)} disabled={product.stockQty <= 0}>
+                      Buy Now
                     </button>
                     <button type="button" className="wishlist-btn" onClick={() => handleRemove(item.id)}>
                       Delete

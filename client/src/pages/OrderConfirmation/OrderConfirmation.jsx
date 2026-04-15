@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import * as api from '../../services/api';
 import Loader from '../../components/Loader/Loader';
+import { formatPrice } from '../../utils/price';
 import './OrderConfirmation.css';
 
 const OrderConfirmation = () => {
@@ -50,17 +51,17 @@ const OrderConfirmation = () => {
           <h3>Order Summary</h3>
           <div className="od-row">
             <span className="od-label">Items:</span>
-            <span className="od-value">₹{parseFloat(order.subtotal).toFixed(2)}</span>
+            <span className="od-value">₹{formatPrice(order.subtotal).full}</span>
           </div>
           <div className="od-row">
             <span className="od-label">Postage & Packing:</span>
-            <span className="od-value">₹{parseFloat(order.shippingCost).toFixed(2)}</span>
+            <span className="od-value">₹{formatPrice(order.shippingCost).full}</span>
           </div>
           <hr />
           <div className="od-row">
             <span className="od-label" style={{fontWeight: 'bold'}}>Order Total:</span>
             <span className="od-value" style={{fontWeight: 'bold', color: '#B12704'}}>
-              ₹{parseFloat(order.total).toFixed(2)}
+              ₹{formatPrice(order.total).full}
             </span>
           </div>
         </div>

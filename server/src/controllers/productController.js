@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../lib/prisma');
 
 /**
  * GET /api/products
@@ -26,7 +25,11 @@ const getProducts = async (req, res, next) => {
     const where = {};
 
     if (q) {
-      where.name = { contains: q, mode: 'insensitive' };
+      where.OR = [
+        { name: { contains: q, mode: 'insensitive' } },
+        { description: { contains: q, mode: 'insensitive' } },
+        { category: { name: { contains: q, mode: 'insensitive' } } },
+      ];
     }
 
     if (category) {
@@ -62,8 +65,8 @@ const getProducts = async (req, res, next) => {
         include: {
           category: { select: { id: true, name: true, slug: true } },
           images: {
-            where: { isPrimary: true },
-            take: 1,
+            orderBy: [{ isPrimary: 'desc' }, { id: 'asc' }],
+            take: 4,
           },
         },
       }),

@@ -406,6 +406,91 @@
   margin-bottom: 12px;
 }
 
+.pd-review-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.pd-review-toolbar-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pd-review-toolbar-row label {
+  font-size: 13px;
+  color: #565959;
+}
+
+.pd-review-toolbar-row select {
+  border: 1px solid #d5d9d9;
+  border-radius: 8px;
+  padding: 6px 8px;
+  background: #ffffff;
+}
+
+.pd-review-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pd-review-search input {
+  border: 1px solid #d5d9d9;
+  border-radius: 999px;
+  padding: 8px 12px;
+  min-width: 210px;
+}
+
+.pd-review-search button {
+  border: 1px solid #d5d9d9;
+  border-radius: 999px;
+  background: #f0f2f2;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.pd-review-media-strip {
+  border: 1px solid #e7e7e7;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.pd-review-media-strip h4 {
+  margin-bottom: 10px;
+}
+
+.pd-review-media-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pd-review-media-thumb {
+  width: 92px;
+  height: 92px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #d5d9d9;
+  background: #f7fafa;
+  display: block;
+}
+
+.pd-review-media-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pd-review-filter-note {
+  margin-top: 4px;
+}
+
 .pd-review-empty,
 .pd-review-note {
   color: #565959;
@@ -474,6 +559,21 @@
   padding: 12px;
 }
 
+.pd-review-inline-media {
+  width: 100%;
+  max-width: 220px;
+  border: 1px solid #e7e7e7;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.pd-review-inline-media img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .pd-review-card h4 {
   margin-bottom: 4px;
 }
@@ -490,6 +590,17 @@
   font-size: 13px;
   color: #565959;
   margin-bottom: 4px;
+}
+
+.pd-verified {
+  display: inline-block;
+  background: #f0f8ff;
+  color: #007185;
+  border: 1px solid #cfe8ef;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 12px;
+  margin-bottom: 6px;
 }
 
 .pd-review-form {
@@ -654,5 +765,14 @@
 
   .pd-review-summary {
     grid-template-columns: 1fr;
+  }
+
+  .pd-review-search {
+    width: 100%;
+  }
+
+  .pd-review-search input {
+    flex: 1;
+    min-width: 0;
   }
 }

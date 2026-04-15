@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import StarRating from '../StarRating/StarRating';
 import { useCart } from '../../context/CartContext';
 import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
@@ -8,24 +8,49 @@ import './ProductCard.css';
 
 const ProductCard = ({ product }) => {
   const { addItemToCart } = useCart();
+  const navigate = useNavigate();
   const [actionState, setActionState] = useState('idle');
-  const fallbackImage = getSizedFallback(600, 400);
-  const imageUrl = normalizeImageUrl(product.images?.[0]?.imageUrl, fallbackImage);
+  const [imageIndex, setImageIndex] = useState(0);
+  const fallbackImage = getSizedFallback(600, 400, product.name.slice(0, 24));
+  const imageCandidates = useMemo(() => {
+    const urls = (product.images || [])
+      .map((img) => normalizeImageUrl(img.imageUrl, fallbackImage))
+      .filter((url) => url && url !== fallbackImage);
+
+    return urls.length > 0 ? urls : [fallbackImage];
+  }, [product.images, fallbackImage]);
+
+  const imageUrl = imageCandidates[Math.min(imageIndex, imageCandidates.length - 1)] || fallbackImage;
   const isOutOfStock = product.stockQty <= 0;
-  
-  // Format price helper
-  const formatPrice = (price) => {
-    const p = parseFloat(price).toFixed(2);
-    const [whole, fraction] = p.split('.');
-    return { whole, fraction };
-  };
 
   const { whole, fraction } = formatPrice(product.price);
 
   return (
-    <div className="product-card">
+    <div
+      className="product-card"
+      role="link"
+      tabIndex={0}
+      onClick={() => navigate(`/products/${product.id}`)}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          navigate(`/products/${product.id}`);
+        }
+      }}
+    >
       <Link to={`/products/${product.id}`} className="pc-image-link">
-        <img src={imageUrl} alt={product.name} className="pc-image" onError={(event) => withImageFallback(event, fallbackImage)} />
+        <img
+          src={imageUrl}
+          alt={product.name}
+          className="pc-image"
+          onError={(event) => {
+            if (imageIndex < imageCandidates.length - 1) {
+              setImageIndex((prev) => prev + 1);
+              return;
+            }
+            withImageFallback(event, fallbackImage);
+          }}
+        />
       </Link>
       
       <div className="pc-content">
@@ -45,7 +70,7 @@ const ProductCard = ({ product }) => {
         <div className="pc-price-block">
           <span className="pc-currency">₹</span>
           <span className="pc-price-whole">{whole}</span>
-          <span className="pc-price-fraction">{fraction}</span>
+          <span className="pc-price-fraction">.{fraction}</span>
         </div>
         
         <div className="pc-delivery">

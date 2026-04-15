@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import Loader from '../../components/Loader/Loader';
 import * as api from '../../services/api';
+import { demoCategories, demoProducts } from '../../data/demoCatalog';
 import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
 import { formatPrice } from '../../utils/price';
 import './Home.css';
@@ -36,6 +37,10 @@ const Home = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      let nextCategories = [];
+      let nextFeaturedProducts = [];
+      let nextAmazonBasics = [];
+
       try {
         const [catsRes, prodsRes, basicsRes] = await Promise.all([
           api.getCategories(),
@@ -43,12 +48,19 @@ const Home = () => {
           api.getProducts({ category: 'amazon-basics', limit: 6 })
         ]);
         
-        if (catsRes.data.success) setCategories(catsRes.data.data);
-        if (prodsRes.data.success) setFeaturedProducts(prodsRes.data.data);
-        if (basicsRes.data?.success) setAmazonBasics(basicsRes.data.data);
+        if (catsRes.data.success && catsRes.data.data.length > 0) nextCategories = catsRes.data.data;
+        if (prodsRes.data.success && prodsRes.data.data.length > 0) nextFeaturedProducts = prodsRes.data.data;
+        if (basicsRes.data?.success && basicsRes.data.data.length > 0) nextAmazonBasics = basicsRes.data.data;
       } catch (err) {
         console.error('Error fetching home data:', err);
       } finally {
+        if (nextCategories.length === 0) nextCategories = demoCategories.slice(0, 4);
+        if (nextFeaturedProducts.length === 0) nextFeaturedProducts = demoProducts.slice(0, 4);
+        if (nextAmazonBasics.length === 0) nextAmazonBasics = demoProducts.filter((product) => product.category?.slug === 'amazon-basics');
+
+        setCategories(nextCategories);
+        setFeaturedProducts(nextFeaturedProducts);
+        setAmazonBasics(nextAmazonBasics);
         setLoading(false);
       }
     };

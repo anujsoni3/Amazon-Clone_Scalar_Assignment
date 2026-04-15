@@ -40,9 +40,27 @@ app.use((req, res) => {
 // ── Global error handler ──────────────────────────────────────────────
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+const DEFAULT_PORT = parseInt(process.env.PORT || '5000', 10);
+const MAX_PORT_RETRIES = 5;
+
+const startServer = (port, attempt = 0) => {
+  const server = app.listen(port, () => {
+    console.log(`🚀 Server running on http://localhost:${port}`);
+  });
+
+  server.on('error', (err) => {
+    const canRetry = err.code === 'EADDRINUSE' && attempt < MAX_PORT_RETRIES;
+    if (canRetry) {
+      const nextPort = port + 1;
+      console.warn(`⚠️ Port ${port} is in use. Retrying on ${nextPort}...`);
+      startServer(nextPort, attempt + 1);
+      return;
+    }
+
+    throw err;
+  });
+};
+
+startServer(DEFAULT_PORT);
 
 module.exports = app;
