@@ -160,6 +160,29 @@
   margin-bottom: 15px;
 }
 
+.delivery-progress-wrap {
+  margin-bottom: 16px;
+}
+
+.delivery-progress-bar {
+  height: 8px;
+  background: #e7e7e7;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.delivery-progress-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #007600, #1aab2a);
+}
+
+.delivery-progress-caption {
+  font-size: 12px;
+  color: #565959;
+  margin-top: 6px;
+}
+
 .success-icon {
   color: white;
   background-color: #007600;

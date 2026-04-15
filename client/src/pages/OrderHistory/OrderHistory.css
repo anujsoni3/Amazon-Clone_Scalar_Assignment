@@ -57,6 +57,18 @@
   margin-bottom: 15px;
 }
 
+.oc-status-success {
+  color: #067d62;
+}
+
+.oc-status-info {
+  color: #007185;
+}
+
+.oc-status-neutral {
+  color: #565959;
+}
+
 .oc-item {
   display: flex;
   gap: 15px;

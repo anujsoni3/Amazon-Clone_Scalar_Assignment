@@ -8,6 +8,9 @@ import './Cart.css';
 const Cart = () => {
   const { cartItems, cartSummary, loading } = useCart();
   const navigate = useNavigate();
+  const freeDeliveryThreshold = 499;
+  const amountLeft = Math.max(freeDeliveryThreshold - cartSummary.subtotal, 0);
+  const freeDeliveryProgress = Math.min((cartSummary.subtotal / freeDeliveryThreshold) * 100, 100);
 
   if (loading) return <Loader fullPage />;
 
@@ -46,10 +49,27 @@ const Cart = () => {
             <div className="cart-free-shipping">
               <span className="success-icon">✓</span>
               <div>
-                <span className="free-shipping-text">Your order is eligible for FREE Delivery.</span>
-                <br/>
-                <span className="free-shipping-sub">Select this option at checkout. Details</span>
+                {amountLeft === 0 ? (
+                  <>
+                    <span className="free-shipping-text">Your order is eligible for FREE Delivery.</span>
+                    <br/>
+                    <span className="free-shipping-sub">Select this option at checkout. Details</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="free-shipping-text">Add ₹{amountLeft.toFixed(2)} more for FREE Delivery.</span>
+                    <br/>
+                    <span className="free-shipping-sub">Order above ₹{freeDeliveryThreshold} to unlock delivery savings.</span>
+                  </>
+                )}
               </div>
+            </div>
+
+            <div className="delivery-progress-wrap" aria-label="Free delivery progress">
+              <div className="delivery-progress-bar">
+                <span style={{ width: `${freeDeliveryProgress}%` }}></span>
+              </div>
+              <p className="delivery-progress-caption">{Math.round(freeDeliveryProgress)}% toward FREE Delivery</p>
             </div>
             
             <div className="cart-subtotal">

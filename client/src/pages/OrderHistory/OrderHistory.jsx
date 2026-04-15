@@ -35,6 +35,13 @@ const OrderHistory = () => {
 
   if (loading) return <Loader fullPage />;
 
+  const statusMap = {
+    PENDING: { label: 'Order placed', tone: 'neutral' },
+    CONFIRMED: { label: 'Arriving soon', tone: 'info' },
+    SHIPPED: { label: 'Shipped', tone: 'info' },
+    DELIVERED: { label: 'Delivered', tone: 'success' },
+  };
+
   return (
     <div className="order-hist-page">
       <div className="order-hist-header">
@@ -54,7 +61,7 @@ const OrderHistory = () => {
                 <div className="oc-header-left">
                   <div className="oc-info-block">
                     <span className="oc-label">ORDER PLACED</span>
-                    <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+                    <span>{new Date(order.placedAt).toLocaleDateString()}</span>
                   </div>
                   <div className="oc-info-block">
                     <span className="oc-label">TOTAL</span>
@@ -72,7 +79,9 @@ const OrderHistory = () => {
               </div>
               
               <div className="oc-body">
-                <h3>{order.status === 'SUCCESS' ? 'Delivered successfully' : 'Processing'}</h3>
+                <h3 className={`oc-status oc-status-${statusMap[order.status]?.tone || 'neutral'}`}>
+                  {statusMap[order.status]?.label || 'Processing'}
+                </h3>
                 {order.items.map(item => (
                   <div key={item.id} className="oc-item">
                     <img src={item.product.images?.[0]?.imageUrl || 'https://via.placeholder.com/80'} alt={item.product.name} />
