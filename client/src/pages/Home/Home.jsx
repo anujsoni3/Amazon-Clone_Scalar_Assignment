@@ -65,6 +65,39 @@ const Home = () => {
     }
   };
 
+  const shopByGrid = [
+    {
+      title: 'Gaming accessories',
+      items: [
+        { label: 'Headsets', image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=420&q=80' },
+        { label: 'Keyboards', image: 'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=420&q=80' },
+        { label: 'Computer mice', image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=420&q=80' },
+        { label: 'Chairs', image: 'https://images.unsplash.com/photo-1505843513577-22bb7d21e455?w=420&q=80' }
+      ],
+      link: '/products?category=electronics'
+    },
+    {
+      title: 'Shop deals in Fashion',
+      items: [
+        { label: 'Jeans', image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=420&q=80' },
+        { label: 'Tops', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=420&q=80' },
+        { label: 'Dresses', image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=420&q=80' },
+        { label: 'Shoes', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=420&q=80' }
+      ],
+      link: '/products?category=clothing'
+    },
+    {
+      title: 'Refresh your space',
+      items: [
+        { label: 'Dining', image: 'https://images.unsplash.com/photo-1617104551722-3b2d513664c0?w=420&q=80' },
+        { label: 'Home', image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=420&q=80' },
+        { label: 'Kitchen', image: 'https://images.unsplash.com/photo-1556911220-bda9f7f7597e?w=420&q=80' },
+        { label: 'Health', image: 'https://images.unsplash.com/photo-1612532275214-e4ca76d0e4d1?w=420&q=80' }
+      ],
+      link: '/products?category=home-kitchen'
+    }
+  ];
+
   return (
     <div className="home">
       <div className="hero-container">
@@ -79,6 +112,29 @@ const Home = () => {
       </div>
 
       <div className="home-content">
+        <section className="top-cards-row">
+          <article className="signin-card">
+            <h2>Sign in for your best experience</h2>
+            <button type="button" className="signin-btn">Sign in securely</button>
+            <p className="signin-note">New customer? Start here.</p>
+          </article>
+
+          {shopByGrid.map((card) => (
+            <article key={card.title} className="quad-card">
+              <h2>{card.title}</h2>
+              <div className="quad-grid">
+                {card.items.map((item) => (
+                  <div key={item.label} className="quad-item">
+                    <img src={item.image} alt={item.label} />
+                    <span>{item.label}</span>
+                  </div>
+                ))}
+              </div>
+              <Link to={card.link} className="category-link">See more</Link>
+            </article>
+          ))}
+        </section>
+
         <div className="category-row">
           {categories.slice(0, 4).map(category => (
             <div key={category.id} className="category-card">
