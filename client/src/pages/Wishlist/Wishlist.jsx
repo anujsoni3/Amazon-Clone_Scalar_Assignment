@@ -3,16 +3,11 @@ import { Link } from 'react-router-dom';
 import Loader from '../../components/Loader/Loader';
 import { useCart } from '../../context/CartContext';
 import * as api from '../../services/api';
+import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
+import { formatPrice } from '../../utils/price';
 import './Wishlist.css';
 
-const FALLBACK_IMAGE =
-  'data:image/svg+xml;utf8,' +
-  encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220">
-      <rect width="220" height="220" fill="#f3f3f3"/>
-      <text x="50%" y="50%" text-anchor="middle" fill="#565959" font-family="Arial" font-size="14">Image unavailable</text>
-    </svg>
-  `);
+const FALLBACK_IMAGE = getSizedFallback(220, 220);
 
 const Wishlist = () => {
   const [items, setItems] = useState([]);
@@ -78,17 +73,15 @@ const Wishlist = () => {
               <article key={item.id} className="wishlist-card">
                 <Link to={`/products/${product.id}`} className="wishlist-image-wrap">
                   <img
-                    src={product.images?.[0]?.imageUrl || FALLBACK_IMAGE}
+                    src={normalizeImageUrl(product.images?.[0]?.imageUrl, FALLBACK_IMAGE)}
                     alt={product.name}
-                    onError={(event) => {
-                      event.currentTarget.src = FALLBACK_IMAGE;
-                    }}
+                    onError={(event) => withImageFallback(event, FALLBACK_IMAGE)}
                   />
                 </Link>
 
                 <div className="wishlist-content">
                   <Link to={`/products/${product.id}`} className="wishlist-title">{product.name}</Link>
-                  <div className="wishlist-price">₹{parseFloat(product.price).toFixed(2)}</div>
+                  <div className="wishlist-price">₹{formatPrice(product.price).full}</div>
                   <div className={`wishlist-stock ${product.stockQty > 0 ? 'in' : 'out'}`}>
                     {product.stockQty > 0 ? 'In stock' : 'Currently unavailable'}
                   </div>

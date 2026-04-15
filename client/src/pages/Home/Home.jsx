@@ -3,17 +3,11 @@ import { Link } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import Loader from '../../components/Loader/Loader';
 import * as api from '../../services/api';
+import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
+import { formatPrice } from '../../utils/price';
 import './Home.css';
 
-const FALLBACK_IMAGE =
-  'data:image/svg+xml;utf8,' +
-  encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
-      <rect width="800" height="600" fill="#f3f3f3"/>
-      <rect x="120" y="90" width="560" height="420" rx="24" fill="#ffffff" stroke="#d5d9d9"/>
-      <text x="50%" y="48%" text-anchor="middle" fill="#565959" font-family="Arial" font-size="28">Image unavailable</text>
-    </svg>
-  `);
+const FALLBACK_IMAGE = getSizedFallback(800, 600);
 
 const Home = () => {
   const [categories, setCategories] = useState([]);
@@ -78,7 +72,7 @@ const Home = () => {
   };
 
   const handleImageFallback = (event) => {
-    event.currentTarget.src = FALLBACK_IMAGE;
+    withImageFallback(event, FALLBACK_IMAGE);
   };
 
   const shopByGrid = [
@@ -125,7 +119,7 @@ const Home = () => {
       <div className="hero-container">
         <div className="hero-slider" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
           {heroBanners.map((img, idx) => (
-            <img key={idx} className="hero-image" src={img} alt={`Banner ${idx}`} onError={handleImageFallback} />
+            <img key={idx} className="hero-image" src={normalizeImageUrl(img, FALLBACK_IMAGE)} alt={`Banner ${idx}`} onError={handleImageFallback} />
           ))}
         </div>
         <button className="slider-btn left-btn" onClick={slideLeft}>&#10094;</button>
@@ -153,7 +147,7 @@ const Home = () => {
                   <div className="quad-grid">
                     {card.items.map((item) => (
                       <div key={item.label} className="quad-item">
-                        <img src={item.image} alt={item.label} onError={handleImageFallback} />
+                        <img src={normalizeImageUrl(item.image, FALLBACK_IMAGE)} alt={item.label} onError={handleImageFallback} />
                         <span>{item.label}</span>
                       </div>
                     ))}
@@ -170,7 +164,7 @@ const Home = () => {
             <div key={category.id} className="category-card">
               <h2>{category.name}</h2>
               <div className="category-card-image">
-                <img src={getCategoryThemeImage(category.slug)} alt={category.name} onError={handleImageFallback} />
+                <img src={normalizeImageUrl(getCategoryThemeImage(category.slug), FALLBACK_IMAGE)} alt={category.name} onError={handleImageFallback} />
               </div>
               <div className="category-card-inner">
                  <Link to={`/products?category=${category.slug}`} className="category-link">Shop now</Link>

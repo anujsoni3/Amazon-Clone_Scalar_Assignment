@@ -4,6 +4,8 @@ import StarRating from '../../components/StarRating/StarRating';
 import Loader from '../../components/Loader/Loader';
 import { useCart } from '../../context/CartContext';
 import * as api from '../../services/api';
+import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
+import { formatPrice } from '../../utils/price';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
@@ -26,14 +28,7 @@ const ProductDetail = () => {
   const [zoomPoint, setZoomPoint] = useState({ x: 50, y: 50 });
   const [openSpecSection, setOpenSpecSection] = useState('features');
 
-  const fallbackImage =
-    'data:image/svg+xml;utf8,' +
-    encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
-        <rect width="800" height="600" fill="#f3f3f3"/>
-        <text x="50%" y="50%" text-anchor="middle" fill="#565959" font-family="Arial" font-size="26">Image unavailable</text>
-      </svg>
-    `);
+  const fallbackImage = getSizedFallback(800, 600);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -48,7 +43,7 @@ const ProductDetail = () => {
           const prod = productRes.data.data;
           setProduct(prod);
           if (prod.images && prod.images.length > 0) {
-            setActiveImage(prod.images[0].imageUrl);
+            setActiveImage(normalizeImageUrl(prod.images[0].imageUrl, fallbackImage));
           }
         }
 
@@ -153,14 +148,13 @@ const ProductDetail = () => {
     const success = await addItemToCart(product.id, qty);
     setAdding(false);
     if (success) {
-      navigate('/cart');
+      navigate('/checkout');
     } else {
       alert("Failed to process Buy Now");
     }
   };
 
-  const p = parseFloat(product.price).toFixed(2);
-  const [whole, fraction] = p.split('.');
+  const { whole, fraction } = formatPrice(product.price);
   const discount = 22;
   const deliveryDate = new Date();
   deliveryDate.setDate(deliveryDate.getDate() + 3);
@@ -218,10 +212,10 @@ const ProductDetail = () => {
             {product.images?.map((img, idx) => (
               <div
                 key={idx}
-                className={`pd-thumbnail ${activeImage === img.imageUrl ? 'active' : ''}`}
-                onMouseEnter={() => setActiveImage(img.imageUrl)}
+                className={`pd-thumbnail ${activeImage === normalizeImageUrl(img.imageUrl, fallbackImage) ? 'active' : ''}`}
+                onMouseEnter={() => setActiveImage(normalizeImageUrl(img.imageUrl, fallbackImage))}
               >
-                <img src={img.imageUrl} alt={`Thumbnail ${idx}`} onError={(event) => { event.currentTarget.src = fallbackImage; }} />
+                <img src={normalizeImageUrl(img.imageUrl, fallbackImage)} alt={`Thumbnail ${idx}`} onError={(event) => withImageFallback(event, fallbackImage)} />
               </div>
             ))}
           </div>
@@ -234,7 +228,7 @@ const ProductDetail = () => {
             <img
               src={activeImage || fallbackImage}
               alt={product.name}
-              onError={(event) => { event.currentTarget.src = fallbackImage; }}
+              onError={(event) => withImageFallback(event, fallbackImage)}
               style={zoomActive ? { transformOrigin: `${zoomPoint.x}% ${zoomPoint.y}%` } : undefined}
             />
           </div>
@@ -278,7 +272,7 @@ const ProductDetail = () => {
           <div className="pd-buybox-price">
             <span className="pd-currency">₹</span>
             <span className="pd-price-whole">{whole}</span>
-            <span className="pd-price-fraction">{fraction}</span>
+            <span className="pd-price-fraction">.{fraction}</span>
           </div>
 
           <div className="pd-delivery">
@@ -353,7 +347,7 @@ const ProductDetail = () => {
         <div className="pd-suggestions-row">
           {suggestions.slice(0, 5).map((suggestion) => (
             <Link key={suggestion.id} to={`/products/${suggestion.id}`} className="pd-suggestion-card">
-              <img src={suggestion.images?.[0]?.imageUrl || fallbackImage} alt={suggestion.name} onError={(event) => { event.currentTarget.src = fallbackImage; }} />
+              <img src={normalizeImageUrl(suggestion.images?.[0]?.imageUrl, fallbackImage)} alt={suggestion.name} onError={(event) => withImageFallback(event, fallbackImage)} />
               <span>{suggestion.name}</span>
             </Link>
           ))}

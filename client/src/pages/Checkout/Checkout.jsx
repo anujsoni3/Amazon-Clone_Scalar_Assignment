@@ -2,16 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import * as api from '../../services/api';
+import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
+import { formatPrice } from '../../utils/price';
 import './Checkout.css';
 
-const FALLBACK_IMAGE =
-  'data:image/svg+xml;utf8,' +
-  encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
-      <rect width="160" height="160" fill="#f3f3f3"/>
-      <text x="50%" y="50%" text-anchor="middle" fill="#565959" font-family="Arial" font-size="14">Image unavailable</text>
-    </svg>
-  `);
+const FALLBACK_IMAGE = getSizedFallback(160, 160);
 
 const Checkout = () => {
   const { cartItems, cartSummary, clearCartLocally } = useCart();
@@ -193,15 +188,13 @@ const Checkout = () => {
                 {cartItems.map((item) => (
                   <div key={item.id} className="checkout-item">
                     <img
-                      src={item.product.images?.[0]?.imageUrl || FALLBACK_IMAGE}
+                      src={normalizeImageUrl(item.product.images?.[0]?.imageUrl, FALLBACK_IMAGE)}
                       alt={item.product.name}
-                      onError={(event) => {
-                        event.currentTarget.src = FALLBACK_IMAGE;
-                      }}
+                      onError={(event) => withImageFallback(event, FALLBACK_IMAGE)}
                     />
                     <div className="checkout-item-details">
                       <p className="ci-name">{item.product.name}</p>
-                      <p className="ci-price"><strong>₹{parseFloat(item.product.price).toFixed(2)}</strong></p>
+                      <p className="ci-price"><strong>₹{formatPrice(item.product.price).full}</strong></p>
                       <p className="ci-qty">Quantity: {item.quantity}</p>
                       <p className="ci-pay">Payment: {selectedPayment.toUpperCase()}</p>
                     </div>
@@ -230,22 +223,22 @@ const Checkout = () => {
           <h3>Order Summary</h3>
           <div className="summary-row">
             <span>Items:</span>
-            <span>₹{cartSummary.subtotal.toFixed(2)}</span>
+            <span>₹{formatPrice(cartSummary.subtotal).full}</span>
           </div>
           <div className="summary-row">
             <span>Delivery:</span>
-            <span>₹{shippingCost.toFixed(2)}</span>
+            <span>₹{formatPrice(shippingCost).full}</span>
           </div>
           <div className="summary-row">
             <span>Total:</span>
-            <span>₹{(cartSummary.subtotal + shippingCost).toFixed(2)}</span>
+            <span>₹{formatPrice(cartSummary.subtotal + shippingCost).full}</span>
           </div>
           
           <hr/>
           
           <div className="summary-row total-row">
             <span>Order Total:</span>
-            <span>₹{total.toFixed(2)}</span>
+            <span>₹{formatPrice(total).full}</span>
           </div>
         </div>
       </div>

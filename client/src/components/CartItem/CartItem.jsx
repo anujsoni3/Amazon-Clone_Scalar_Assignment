@@ -2,11 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import * as api from '../../services/api';
+import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
+import { formatPrice } from '../../utils/price';
 
 const CartItem = ({ item }) => {
   const { updateQuantity, removeItem } = useCart();
   const product = item.product;
-  const imageUrl = product.images?.[0]?.imageUrl || 'https://via.placeholder.com/150';
+  const fallbackImage = getSizedFallback(300, 300);
+  const imageUrl = normalizeImageUrl(product.images?.[0]?.imageUrl, fallbackImage);
 
   const handleQtyChange = (e) => {
     updateQuantity(item.id, parseInt(e.target.value));
@@ -32,7 +35,7 @@ const CartItem = ({ item }) => {
     <div className="cart-item">
       <div className="cart-item-image">
         <Link to={`/products/${product.id}`}>
-          <img src={imageUrl} alt={product.name} />
+          <img src={imageUrl} alt={product.name} onError={(event) => withImageFallback(event, fallbackImage)} />
         </Link>
       </div>
       
@@ -59,7 +62,7 @@ const CartItem = ({ item }) => {
       </div>
       
       <div className="cart-item-price">
-        <strong>₹{parseFloat(product.price).toFixed(2)}</strong>
+        <strong>₹{formatPrice(product.price).full}</strong>
       </div>
     </div>
   );

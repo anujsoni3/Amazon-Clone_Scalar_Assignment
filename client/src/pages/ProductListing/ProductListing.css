@@ -1,13 +1,30 @@
 .pl-page {
   display: flex;
+  flex-wrap: wrap;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 20px;
+  padding: 8px 20px 20px;
   gap: 20px;
 }
 
+.pl-results-strip {
+  width: 100%;
+  border-top: 1px solid #d5d9d9;
+  border-bottom: 1px solid #d5d9d9;
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.pl-results-strip p strong {
+  color: #c45500;
+}
+
 .pl-sidebar {
-  width: 250px;
+  width: 270px;
   flex-shrink: 0;
   border-right: 1px solid #ddd;
   padding-right: 20px;
@@ -24,6 +41,29 @@
 .pl-category-list {
   list-style: none;
   margin-bottom: 20px;
+}
+
+.pl-link-list {
+  list-style: none;
+  margin-bottom: 16px;
+}
+
+.pl-link-list li {
+  margin-bottom: 6px;
+}
+
+.pl-link-list button {
+  border: none;
+  background: transparent;
+  color: #0f1111;
+  padding: 0;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.pl-link-list button:hover {
+  color: #c7511f;
 }
 
 .pl-category-list li {
@@ -90,6 +130,35 @@
   color: #c7511f;
 }
 
+.pl-star-filter {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.stars {
+  color: #f08804;
+  letter-spacing: 0.5px;
+}
+
+.pl-color-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.pl-color-swatch {
+  width: 22px;
+  height: 22px;
+  border: 1px solid #b8bec5;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.pl-color-swatch.active {
+  box-shadow: 0 0 0 2px #007185;
+}
+
 .pl-checkbox-row {
   display: flex;
   align-items: center;
@@ -113,19 +182,26 @@
 
 .pl-main {
   flex-grow: 1;
+  min-width: 0;
 }
 
 .pl-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  align-items: baseline;
+  margin-bottom: 14px;
   padding-bottom: 10px;
   border-bottom: 1px solid #ddd;
+  gap: 10px;
 }
 
 .pl-header-results {
   font-size: 14px;
+}
+
+.pl-results-hint {
+  font-size: 14px;
+  color: #565959;
 }
 
 .pl-applied-filters {
@@ -133,18 +209,18 @@
 }
 
 .pl-header-sort select {
-  padding: 5px;
+  padding: 6px 9px;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
-  background-color: #f3f3f3;
+  border-radius: 999px;
+  background-color: #f7fafa;
   cursor: pointer;
   outline: none;
 }
 
 .pl-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
 }
 
 .no-results {
@@ -157,6 +233,22 @@
   .pl-page {
     flex-direction: column;
     padding: 10px;
+  }
+
+  .pl-results-strip {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pl-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+  }
+
+  .pl-color-grid {
+    grid-template-columns: repeat(10, 1fr);
   }
   
   .pl-grid {

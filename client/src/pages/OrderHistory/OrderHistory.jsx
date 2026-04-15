@@ -3,16 +3,11 @@ import { Link } from 'react-router-dom';
 import * as api from '../../services/api';
 import Loader from '../../components/Loader/Loader';
 import { useCart } from '../../context/CartContext';
+import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
+import { formatPrice } from '../../utils/price';
 import './OrderHistory.css';
 
-const FALLBACK_IMAGE =
-  'data:image/svg+xml;utf8,' +
-  encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
-      <rect width="160" height="160" fill="#f3f3f3"/>
-      <text x="50%" y="50%" text-anchor="middle" fill="#565959" font-family="Arial" font-size="14">Image unavailable</text>
-    </svg>
-  `);
+const FALLBACK_IMAGE = getSizedFallback(160, 160);
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
@@ -74,7 +69,7 @@ const OrderHistory = () => {
                   </div>
                   <div className="oc-info-block">
                     <span className="oc-label">TOTAL</span>
-                    <span>₹{parseFloat(order.total).toFixed(2)}</span>
+                    <span>₹{formatPrice(order.total).full}</span>
                   </div>
                   <div className="oc-info-block">
                     <span className="oc-label">DISPATCH TO</span>
@@ -94,17 +89,16 @@ const OrderHistory = () => {
                 {order.items.map(item => (
                   <div key={item.id} className="oc-item">
                     <img
-                      src={item.product.images?.[0]?.imageUrl || FALLBACK_IMAGE}
+                      src={normalizeImageUrl(item.product.images?.[0]?.imageUrl, FALLBACK_IMAGE)}
                       alt={item.product.name}
-                      onError={(event) => {
-                        event.currentTarget.src = FALLBACK_IMAGE;
-                      }}
+                      onError={(event) => withImageFallback(event, FALLBACK_IMAGE)}
                     />
                     <div className="oc-item-details">
                       <Link to={`/products/${item.productId}`} className="text-link">
                         {item.product.name}
                       </Link>
                       <div className="oc-item-qty">Qty: {item.quantity}</div>
+                      <div className="oc-item-price">₹{formatPrice(item.unitPrice).full}</div>
                       <button 
                         onClick={() => handleReorder(item.productId)}
                         className="btn btn-secondary review-btn"
