@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import * as api from '../../services/api';
@@ -27,6 +27,7 @@ const Checkout = () => {
   const [submitting, setSubmitting] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
   const [selectedPayment, setSelectedPayment] = useState('card');
+  const orderRequestKeyRef = useRef('');
 
   const checkoutItems = buyNowItem ? [buyNowItem] : cartItems;
   const checkoutSubtotal = buyNowItem
@@ -76,6 +77,11 @@ const Checkout = () => {
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+
+    if (!orderRequestKeyRef.current) {
+      orderRequestKeyRef.current = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+    const idempotencyKey = orderRequestKeyRef.current;
     
     try {
       const res = buyNowItem
@@ -83,8 +89,8 @@ const Checkout = () => {
             productId: buyNowItem.productId || buyNowItem.product.id,
             quantity: buyNowItem.quantity,
             shippingAddress: address,
-          })
-        : await api.placeOrder(address);
+          }, idempotencyKey)
+        : await api.placeOrder(address, idempotencyKey);
 
       if (res.data.success) {
         if (!buyNowItem) {

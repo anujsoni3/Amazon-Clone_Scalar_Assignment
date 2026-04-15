@@ -5,6 +5,19 @@ const api = axios.create({
   withCredentials: true,
 });
 
+const createIdempotencyKey = () => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
+const withIdempotency = (idempotencyKey) => ({
+  headers: {
+    'x-idempotency-key': idempotencyKey || createIdempotencyKey(),
+  },
+});
+
 export const getProducts = (params) => api.get('/products', { params });
 export const getProductById = (id) => api.get(`/products/${id}`);
 
@@ -15,8 +28,8 @@ export const addToCart = (productId, quantity) => api.post('/cart', { productId,
 export const updateCartItem = (itemId, quantity) => api.put(`/cart/${itemId}`, { quantity });
 export const removeFromCart = (itemId) => api.delete(`/cart/${itemId}`);
 
-export const placeOrder = (shippingAddress) => api.post('/orders', { shippingAddress });
-export const placeBuyNowOrder = (payload) => api.post('/orders/buy-now', payload);
+export const placeOrder = (shippingAddress, idempotencyKey) => api.post('/orders', { shippingAddress }, withIdempotency(idempotencyKey));
+export const placeBuyNowOrder = (payload, idempotencyKey) => api.post('/orders/buy-now', payload, withIdempotency(idempotencyKey));
 export const getOrderHistory = () => api.get('/orders/history');
 export const getOrderById = (id) => api.get(`/orders/${id}`);
 
