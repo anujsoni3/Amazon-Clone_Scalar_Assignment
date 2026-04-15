@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import StarRating from '../../components/StarRating/StarRating';
 import Loader from '../../components/Loader/Loader';
 import { useCart } from '../../context/CartContext';
@@ -62,9 +62,26 @@ const ProductDetail = () => {
 
   const p = parseFloat(product.price).toFixed(2);
   const [whole, fraction] = p.split('.');
+  const discount = 22;
+  const deliveryDate = new Date();
+  deliveryDate.setDate(deliveryDate.getDate() + 3);
+
+  const deliveryText = deliveryDate.toLocaleDateString('en-IN', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
 
   return (
     <div className="pd-page">
+      <div className="pd-breadcrumb">
+        <Link to="/">Home</Link>
+        <span>›</span>
+        <Link to={`/products?category=${product.category?.slug || ''}`}>{product.category?.name || 'Products'}</Link>
+        <span>›</span>
+        <span className="pd-crumb-active">{product.name}</span>
+      </div>
+
       {/* LEFT: Images */}
       <div className="pd-image-section">
         <div className="pd-thumbnails">
@@ -89,7 +106,16 @@ const ProductDetail = () => {
         <div className="pd-rating">
           <StarRating rating={parseFloat(product.rating)} count={product.reviewCount} />
         </div>
+        <div className="pd-meta-row">
+          <span className="pd-choice-badge">Amazon's Choice</span>
+          <span className="pd-prime-badge">prime</span>
+        </div>
         <hr className="pd-divider" />
+
+        <div className="pd-offer-line">
+          <span className="pd-offer-discount">-{discount}%</span>
+          <span> Limited time deal</span>
+        </div>
         
         <div className="pd-price-block">
           <span className="pd-currency">₹</span>
@@ -97,6 +123,7 @@ const ProductDetail = () => {
           <span className="pd-price-fraction">{fraction}</span>
         </div>
         <div className="pd-taxes-text">Inclusive of all taxes</div>
+        <div className="pd-delivery-promise">FREE delivery by <strong>{deliveryText}</strong>. Order within 6 hrs 40 mins.</div>
         
         <hr className="pd-divider" />
         
@@ -115,11 +142,11 @@ const ProductDetail = () => {
         </div>
         
         <div className="pd-delivery">
-          <span className="text-link" style={{color: '#007185'}}>FREE delivery</span> usually within 3-4 days.
+          <span className="text-link">FREE delivery</span> by <strong>{deliveryText}</strong>
         </div>
         
-        <div className="pd-delivery-location" style={{display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px', marginBottom: '15px', color: '#007185', cursor: 'pointer'}}>
-          <span style={{color: '#0F1111'}}>📍</span> Deliver to Anuj - Los Angeles 90001
+        <div className="pd-delivery-location">
+          <span className="pd-pin">📍</span> Deliver to Anuj - Mumbai 400001
         </div>
         
         <h3 className={`pd-stock ${product.stockQty > 0 ? 'in-stock' : 'out-stock'}`}>
@@ -156,22 +183,24 @@ const ProductDetail = () => {
               <span className="secure-icon">🔒</span> Secure transaction
             </div>
 
-            <table className="pd-seller-info" style={{marginTop: '15px', fontSize: '13px', width: '100%', borderCollapse: 'collapse'}}>
+            <table className="pd-seller-info">
               <tbody>
                 <tr>
-                  <td style={{color: '#565959', paddingBottom: '4px'}}>Ships from</td>
-                  <td style={{color: '#0F1111'}}>Amazon</td>
+                  <td className="pd-seller-label">Ships from</td>
+                  <td>Amazon</td>
                 </tr>
                 <tr>
-                  <td style={{color: '#565959', paddingBottom: '4px'}}>Sold by</td>
-                  <td style={{color: '#0F1111'}}>Amazon</td>
+                  <td className="pd-seller-label">Sold by</td>
+                  <td>Amazon Retail</td>
                 </tr>
                 <tr>
-                  <td style={{color: '#565959', paddingBottom: '4px'}}>Returns</td>
-                  <td style={{color: '#007185'}}>10 days Returnable</td>
+                  <td className="pd-seller-label">Returns</td>
+                  <td className="pd-return-link">10 days Returnable</td>
                 </tr>
               </tbody>
             </table>
+
+            <button type="button" className="pd-wishlist-btn">Add to Wish List</button>
           </>
         )}
       </div>

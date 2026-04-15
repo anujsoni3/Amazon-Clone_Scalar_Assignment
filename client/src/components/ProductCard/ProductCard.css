@@ -35,6 +35,28 @@
   flex-grow: 1;
 }
 
+.pc-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.pc-choice-badge {
+  background: linear-gradient(90deg, #232f3e 62%, #f08804 62%);
+  color: #ffffff;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+}
+
+.pc-prime {
+  color: #007185;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .pc-title-link {
   color: var(--color-text);
   margin-bottom: 5px;
@@ -100,4 +122,11 @@
 
 .pc-add-btn:hover {
   background-color: var(--color-btn-primary-hover);
+}
+
+.pc-add-btn:disabled {
+  background-color: #f0f2f2;
+  border-color: #d5d9d9;
+  color: #565959;
+  cursor: not-allowed;
 }

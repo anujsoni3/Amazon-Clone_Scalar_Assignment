@@ -1,9 +1,30 @@
 .pd-page {
   display: flex;
+  flex-wrap: wrap;
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 20px;
   gap: 30px;
+}
+
+.pd-breadcrumb {
+  width: 100%;
+  font-size: 12px;
+  color: #565959;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.pd-breadcrumb a {
+  color: #007185;
+}
+
+.pd-crumb-active {
+  color: #0f1111;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 /* Images */
@@ -71,6 +92,40 @@
   margin-bottom: 10px;
 }
 
+.pd-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.pd-choice-badge {
+  background: linear-gradient(90deg, #232f3e 62%, #f08804 62%);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 2px;
+}
+
+.pd-prime-badge {
+  color: #007185;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pd-offer-line {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #565959;
+}
+
+.pd-offer-discount {
+  color: #cc0c39;
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
 .pd-divider {
   border: 0;
   border-top: 1px solid var(--color-border);
@@ -102,6 +157,12 @@
   font-size: 14px;
   color: var(--color-text-secondary);
   margin-top: 5px;
+}
+
+.pd-delivery-promise {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .pd-description h3 {
@@ -154,6 +215,20 @@
   font-size: 18px;
   font-weight: 400;
   margin-bottom: 15px;
+}
+
+.pd-delivery-location {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  margin-bottom: 15px;
+  color: #007185;
+  cursor: pointer;
+}
+
+.pd-pin {
+  color: #0f1111;
 }
 
 .in-stock {
@@ -216,6 +291,37 @@
   margin-top: 10px;
 }
 
+.pd-seller-info {
+  margin-top: 15px;
+  font-size: 13px;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pd-seller-label {
+  color: #565959;
+  padding-bottom: 4px;
+}
+
+.pd-return-link {
+  color: #007185;
+}
+
+.pd-wishlist-btn {
+  margin-top: 14px;
+  border: 1px solid #d5d9d9;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pd-wishlist-btn:hover {
+  background: #f7fafa;
+}
+
 .pd-mobile-buybox {
   display: none;
 }
@@ -245,5 +351,9 @@
     border-top: 1px solid var(--color-border);
     z-index: 100;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+  }
+
+  .pd-breadcrumb {
+    overflow-x: auto;
   }
 }

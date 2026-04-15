@@ -7,6 +7,7 @@ import './ProductCard.css';
 const ProductCard = ({ product }) => {
   const { addItemToCart } = useCart();
   const imageUrl = product.images?.[0]?.imageUrl || 'https://via.placeholder.com/200';
+  const isOutOfStock = product.stockQty <= 0;
   
   // Format price helper
   const formatPrice = (price) => {
@@ -24,6 +25,11 @@ const ProductCard = ({ product }) => {
       </Link>
       
       <div className="pc-content">
+        <div className="pc-badge-row">
+          <span className="pc-choice-badge">Amazon's Choice</span>
+          <span className="pc-prime">prime</span>
+        </div>
+
         <Link to={`/products/${product.id}`} className="pc-title-link">
           <h2 className="pc-title">{product.name}</h2>
         </Link>
@@ -39,18 +45,19 @@ const ProductCard = ({ product }) => {
         </div>
         
         <div className="pc-delivery">
-          <span>FREE Delivery</span>
+          <span>FREE Delivery Tomorrow</span>
         </div>
         
         <button 
           className="btn pc-add-btn" 
+          disabled={isOutOfStock}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             addItemToCart(product.id, 1);
           }}
         >
-          Add to Cart
+          {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
         </button>
       </div>
     </div>
