@@ -17,28 +17,57 @@
 }
 
 .checkout-section {
-  display: flex;
+  display: block;
   margin-bottom: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: #fff;
 }
 
 .checkout-step {
   font-size: 18px;
   font-weight: 700;
   margin-right: 15px;
-  margin-top: 5px;
+  margin-top: 2px;
+  color: #c45500;
+}
+
+.checkout-section-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 16px 18px;
+  cursor: pointer;
+}
+
+.checkout-section-head h2 {
+  font-size: 22px;
+  font-weight: 500;
 }
 
 .checkout-section-content {
-  flex-grow: 1;
-  background-color: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 20px;
+  padding: 0 18px 18px;
 }
 
 .checkout-section-content h2 {
   font-size: 18px;
   margin-bottom: 15px;
+}
+
+.step-action-btn {
+  border: 1px solid #fcd200;
+  background-color: #ffd814;
+  border-radius: 20px;
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.step-action-btn:hover {
+  background-color: #f7ca00;
 }
 
 .form-group {
@@ -100,6 +129,49 @@
   width: 80px;
   height: 80px;
   object-fit: contain;
+}
+
+.ci-pay {
+  font-size: 13px;
+  color: #565959;
+}
+
+.payment-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.payment-tabs button {
+  border: 1px solid #d5d9d9;
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.payment-tabs button.active {
+  border-color: #e77600;
+  box-shadow: 0 0 0 2px rgba(231, 118, 0, 0.25);
+}
+
+.payment-content {
+  border: 1px solid #d5d9d9;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+  background: #fcfcfc;
+}
+
+.payment-form-grid .form-group input[readonly] {
+  color: #666;
+}
+
+.payment-help {
+  font-size: 14px;
+  color: #333;
 }
 
 .ci-name {
@@ -184,5 +256,9 @@
   
   .half {
     width: 100%;
+  }
+
+  .checkout-section-head h2 {
+    font-size: 18px;
   }
 }

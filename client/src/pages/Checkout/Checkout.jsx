@@ -19,6 +19,8 @@ const Checkout = () => {
   });
 
   const [submitting, setSubmitting] = useState(false);
+  const [activeStep, setActiveStep] = useState(1);
+  const [selectedPayment, setSelectedPayment] = useState('card');
 
   // If cart is empty, redirect back
   if (cartItems.length === 0) {
@@ -28,6 +30,29 @@ const Checkout = () => {
 
   const handleChange = (e) => {
     setAddress({ ...address, [e.target.name]: e.target.value });
+  };
+
+  const isAddressComplete = () => {
+    return [
+      address.name,
+      address.phone,
+      address.addressLine1,
+      address.city,
+      address.state,
+      address.pincode,
+    ].every((value) => value.trim() !== '');
+  };
+
+  const continueToPayment = () => {
+    if (!isAddressComplete()) {
+      alert('Please complete all required delivery fields before continuing.');
+      return;
+    }
+    setActiveStep(2);
+  };
+
+  const continueToReview = () => {
+    setActiveStep(3);
   };
 
   const handlePlaceOrder = async (e) => {
@@ -54,13 +79,17 @@ const Checkout = () => {
   return (
     <div className="checkout-page">
       <div className="checkout-main">
-        <h1>Checkout</h1>
+        <h1>Checkout ({cartSummary.totalQty} items)</h1>
         
-        <div className="checkout-section">
-          <div className="checkout-step">1</div>
-          <div className="checkout-section-content">
+        <section className={`checkout-section ${activeStep === 1 ? 'active' : ''}`}>
+          <button type="button" className="checkout-section-head" onClick={() => setActiveStep(1)}>
+            <span className="checkout-step">1</span>
             <h2>Select a delivery address</h2>
-            <form id="checkout-form" onSubmit={handlePlaceOrder}>
+          </button>
+
+          {activeStep === 1 && (
+          <div className="checkout-section-content">
+            <form id="checkout-form">
               <div className="form-group">
                 <label>Full name (First and Last name)</label>
                 <input type="text" name="name" required value={address.name} onChange={handleChange} />
@@ -91,37 +120,91 @@ const Checkout = () => {
                 <label>State</label>
                 <input type="text" name="state" required value={address.state} onChange={handleChange} />
               </div>
+
+              <button type="button" className="step-action-btn" onClick={continueToPayment}>Use this address</button>
             </form>
           </div>
-        </div>
+          )}
+        </section>
 
-        <div className="checkout-section">
-          <div className="checkout-step">2</div>
+        <section className={`checkout-section ${activeStep === 2 ? 'active' : ''}`}>
+          <button type="button" className="checkout-section-head" onClick={() => setActiveStep(2)}>
+            <span className="checkout-step">2</span>
+            <h2>Select a payment method</h2>
+          </button>
+
+          {activeStep === 2 && (
           <div className="checkout-section-content">
-            <h2>Review items and delivery</h2>
-            <div className="checkout-items">
-              {cartItems.map((item, idx) => (
-                <div key={item.id} className="checkout-item">
-                  <img src={item.product.images?.[0]?.imageUrl} alt={item.product.name} />
-                  <div className="checkout-item-details">
-                    <p className="ci-name">{item.product.name}</p>
-                    <p className="ci-price"><strong>₹{parseFloat(item.product.price).toFixed(2)}</strong></p>
-                    <p className="ci-qty">Quantity: {item.quantity}</p>
+            <div className="payment-tabs" role="tablist" aria-label="Payment methods">
+              <button type="button" className={selectedPayment === 'card' ? 'active' : ''} onClick={() => setSelectedPayment('card')}>Credit or debit card</button>
+              <button type="button" className={selectedPayment === 'upi' ? 'active' : ''} onClick={() => setSelectedPayment('upi')}>UPI</button>
+              <button type="button" className={selectedPayment === 'netbanking' ? 'active' : ''} onClick={() => setSelectedPayment('netbanking')}>Net Banking</button>
+              <button type="button" className={selectedPayment === 'cod' ? 'active' : ''} onClick={() => setSelectedPayment('cod')}>Cash on Delivery</button>
+            </div>
+
+            <div className="payment-content">
+              {selectedPayment === 'card' && (
+                <div className="payment-form-grid">
+                  <div className="form-group">
+                    <label>Card number (demo)</label>
+                    <input type="text" placeholder="4111 1111 1111 1111" readOnly />
+                  </div>
+                  <div className="form-row">
+                    <div className="form-group half">
+                      <label>Expiry</label>
+                      <input type="text" placeholder="MM/YY" readOnly />
+                    </div>
+                    <div className="form-group half">
+                      <label>CVV</label>
+                      <input type="password" placeholder="***" readOnly />
+                    </div>
                   </div>
                 </div>
-              ))}
+              )}
+
+              {selectedPayment === 'upi' && <p className="payment-help">Pay securely using any UPI app. (Static demo mode)</p>}
+              {selectedPayment === 'netbanking' && <p className="payment-help">Choose your bank at the next step. (Static demo mode)</p>}
+              {selectedPayment === 'cod' && <p className="payment-help">Pay by cash upon delivery. Additional verification may apply.</p>}
             </div>
+
+            <button type="button" className="step-action-btn" onClick={continueToReview}>Use this payment method</button>
           </div>
-        </div>
+          )}
+        </section>
+
+        <section className={`checkout-section ${activeStep === 3 ? 'active' : ''}`}>
+          <button type="button" className="checkout-section-head" onClick={() => setActiveStep(3)}>
+            <span className="checkout-step">3</span>
+            <h2>Review items and delivery</h2>
+          </button>
+
+          {activeStep === 3 && (
+            <div className="checkout-section-content">
+              <div className="checkout-items">
+                {cartItems.map((item) => (
+                  <div key={item.id} className="checkout-item">
+                    <img src={item.product.images?.[0]?.imageUrl} alt={item.product.name} />
+                    <div className="checkout-item-details">
+                      <p className="ci-name">{item.product.name}</p>
+                      <p className="ci-price"><strong>₹{parseFloat(item.product.price).toFixed(2)}</strong></p>
+                      <p className="ci-qty">Quantity: {item.quantity}</p>
+                      <p className="ci-pay">Payment: {selectedPayment.toUpperCase()}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
       </div>
 
       <div className="checkout-sidebar">
         <div className="checkout-summary-box">
           <button 
-            type="submit" 
-            form="checkout-form" 
+            type="button"
             className="btn pd-btn-add place-order-btn"
-            disabled={submitting}
+            disabled={submitting || activeStep !== 3 || !isAddressComplete()}
+            onClick={handlePlaceOrder}
           >
             {submitting ? 'Processing...' : 'Place your order'}
           </button>
