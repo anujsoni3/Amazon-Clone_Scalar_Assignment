@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import * as api from '../../services/api';
@@ -36,9 +36,13 @@ const Checkout = () => {
     ? buyNowItem.quantity
     : cartSummary.totalQty;
 
-  // If checkout has no items, redirect back
+  useEffect(() => {
+    if (checkoutItems.length === 0) {
+      navigate('/cart');
+    }
+  }, [checkoutItems.length, navigate]);
+
   if (checkoutItems.length === 0) {
-    navigate('/cart');
     return null;
   }
 

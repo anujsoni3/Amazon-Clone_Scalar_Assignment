@@ -117,7 +117,7 @@ const ProductDetail = () => {
 
   const handleAddToCart = async () => {
     setAdding(true);
-    const success = await addItemToCart(product.id, qty);
+    const success = await addItemToCart(product.id, qty, product);
     setAdding(false);
     if (!success) {
       alert('Failed to add to cart');

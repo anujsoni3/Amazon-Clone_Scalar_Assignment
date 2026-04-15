@@ -124,6 +124,13 @@
   cursor: pointer;
 }
 
+.text-action-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+}
+
 .text-action:hover {
   text-decoration: underline;
 }

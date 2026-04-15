@@ -12,7 +12,7 @@ const CartItem = ({ item }) => {
   const imageUrl = normalizeImageUrl(product.images?.[0]?.imageUrl, fallbackImage);
 
   const handleQtyChange = (e) => {
-    updateQuantity(item.id, parseInt(e.target.value));
+    updateQuantity(item.id, parseInt(e.target.value, 10));
   };
 
   const handleRemove = (e) => {
@@ -55,9 +55,9 @@ const CartItem = ({ item }) => {
             </select>
           </div>
           <div className="cart-action-divider">|</div>
-          <a href="#" className="text-action" onClick={handleRemove}>Delete</a>
+          <button type="button" className="text-action text-action-btn" onClick={handleRemove}>Delete</button>
           <div className="cart-action-divider">|</div>
-          <a href="#" className="text-action" onClick={handleSaveForLater}>Save for later</a>
+          <button type="button" className="text-action text-action-btn" onClick={handleSaveForLater}>Save for later</button>
         </div>
       </div>
       

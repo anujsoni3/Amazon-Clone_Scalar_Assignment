@@ -20,7 +20,7 @@ const Cart = () => {
       <div className="cart-main">
         <div className="cart-header">
           <h1>Shopping Cart</h1>
-          <a href="#" className="text-action hide-on-mobile">Deselect all items</a>
+          <button type="button" className="text-action text-action-btn hide-on-mobile">Deselect all items</button>
           <span className="cart-price-header hide-on-mobile">Price</span>
         </div>
         

@@ -15,9 +15,9 @@ const OrderHistory = () => {
   const { addItemToCart } = useCart();
   const [addingItemId, setAddingItemId] = useState(null);
 
-  const handleReorder = async (productId) => {
+  const handleReorder = async (productId, product) => {
     setAddingItemId(productId);
-    await addItemToCart(productId, 1);
+    await addItemToCart(productId, 1, product);
     setTimeout(() => setAddingItemId(null), 2000);
   };
 
@@ -100,7 +100,7 @@ const OrderHistory = () => {
                       <div className="oc-item-qty">Qty: {item.quantity}</div>
                       <div className="oc-item-price">₹{formatPrice(item.unitPrice).full}</div>
                       <button 
-                        onClick={() => handleReorder(item.productId)}
+                        onClick={() => handleReorder(item.productId, item.product)}
                         className="btn btn-secondary review-btn"
                         disabled={addingItemId === item.productId}
                       >

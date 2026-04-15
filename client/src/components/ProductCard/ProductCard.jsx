@@ -93,7 +93,7 @@ const ProductCard = ({ product }) => {
             e.preventDefault();
             e.stopPropagation();
             setActionState('adding');
-            addItemToCart(product.id, 1).then((success) => {
+            addItemToCart(product.id, 1, product).then((success) => {
               setActionState(success ? 'added' : 'idle');
               if (success) {
                 setTimeout(() => setActionState('idle'), 1400);

@@ -74,7 +74,7 @@ const Wishlist = () => {
   };
 
   const handleMoveToCart = async (item) => {
-    const success = await addItemToCart(item.product.id, 1);
+    const success = await addItemToCart(item.product.id, 1, item.product);
     if (success) {
       await handleRemove(item.id);
     }

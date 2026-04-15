@@ -85,7 +85,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const addItemToCart = async (productId, quantity = 1) => {
+  const addItemToCart = async (productId, quantity = 1, productData = null) => {
     if (useLocalCart) {
       const existingIndex = cartItems.findIndex((item) => item.product.id === productId);
       let nextItems = [...cartItems];
@@ -96,7 +96,8 @@ export const CartProvider = ({ children }) => {
           quantity: nextItems[existingIndex].quantity + quantity,
         };
       } else {
-        const product = demoProducts.find((item) => item.id === productId)
+        const product = productData
+          || demoProducts.find((item) => item.id === productId)
           || demoCartItems.map((item) => item.product).find((item) => item.id === productId)
           || demoProducts[0];
         nextItems = [
