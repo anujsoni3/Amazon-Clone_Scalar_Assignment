@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, MapPin } from 'lucide-react';
+import { Search, ShoppingCart, MapPin, Globe } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import './Navbar.css';
 
@@ -52,9 +52,14 @@ const Navbar = () => {
         </form>
 
         <div className="nav-right">
+          <div className="nav-item nav-border hide-on-mobile nav-language">
+            <Globe size={14} />
+            <span className="nav-line-2">EN</span>
+          </div>
+
           <div className="nav-item nav-border hide-on-mobile">
             <span className="nav-line-1">Hello, Anuj</span>
-            <span className="nav-line-2">Account & Lists</span>
+            <span className="nav-line-2">Your account</span>
           </div>
 
           <Link to="/orders/history" className="nav-item nav-border hide-on-mobile">

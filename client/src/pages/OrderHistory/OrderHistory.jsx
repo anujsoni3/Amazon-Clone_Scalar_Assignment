@@ -5,6 +5,15 @@ import Loader from '../../components/Loader/Loader';
 import { useCart } from '../../context/CartContext';
 import './OrderHistory.css';
 
+const FALLBACK_IMAGE =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+      <rect width="160" height="160" fill="#f3f3f3"/>
+      <text x="50%" y="50%" text-anchor="middle" fill="#565959" font-family="Arial" font-size="14">Image unavailable</text>
+    </svg>
+  `);
+
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -84,7 +93,13 @@ const OrderHistory = () => {
                 </h3>
                 {order.items.map(item => (
                   <div key={item.id} className="oc-item">
-                    <img src={item.product.images?.[0]?.imageUrl || 'https://via.placeholder.com/80'} alt={item.product.name} />
+                    <img
+                      src={item.product.images?.[0]?.imageUrl || FALLBACK_IMAGE}
+                      alt={item.product.name}
+                      onError={(event) => {
+                        event.currentTarget.src = FALLBACK_IMAGE;
+                      }}
+                    />
                     <div className="oc-item-details">
                       <Link to={`/products/${item.productId}`} className="text-link">
                         {item.product.name}

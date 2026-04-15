@@ -5,6 +5,16 @@ import Loader from '../../components/Loader/Loader';
 import * as api from '../../services/api';
 import './Home.css';
 
+const FALLBACK_IMAGE =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+      <rect width="800" height="600" fill="#f3f3f3"/>
+      <rect x="120" y="90" width="560" height="420" rx="24" fill="#ffffff" stroke="#d5d9d9"/>
+      <text x="50%" y="48%" text-anchor="middle" fill="#565959" font-family="Arial" font-size="28">Image unavailable</text>
+    </svg>
+  `);
+
 const Home = () => {
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -54,6 +64,8 @@ const Home = () => {
 
   if (loading) return <Loader fullPage />;
 
+  const basicsRail = amazonBasics.length > 0 ? amazonBasics : featuredProducts.slice(0, 6);
+
   const getCategoryThemeImage = (slug) => {
     switch(slug) {
       case 'electronics': return "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=500&q=80";
@@ -65,7 +77,17 @@ const Home = () => {
     }
   };
 
+  const handleImageFallback = (event) => {
+    event.currentTarget.src = FALLBACK_IMAGE;
+  };
+
   const shopByGrid = [
+    {
+      title: 'Recommended for you',
+      isWelcome: true,
+      cta: 'Continue browsing',
+      ctaLink: '/products',
+    },
     {
       title: 'Gaming accessories',
       items: [
@@ -103,7 +125,7 @@ const Home = () => {
       <div className="hero-container">
         <div className="hero-slider" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
           {heroBanners.map((img, idx) => (
-            <img key={idx} className="hero-image" src={img} alt={`Banner ${idx}`} />
+            <img key={idx} className="hero-image" src={img} alt={`Banner ${idx}`} onError={handleImageFallback} />
           ))}
         </div>
         <button className="slider-btn left-btn" onClick={slideLeft}>&#10094;</button>
@@ -113,24 +135,32 @@ const Home = () => {
 
       <div className="home-content">
         <section className="top-cards-row">
-          <article className="signin-card">
-            <h2>Sign in for your best experience</h2>
-            <button type="button" className="signin-btn">Sign in securely</button>
-            <p className="signin-note">New customer? Start here.</p>
-          </article>
-
           {shopByGrid.map((card) => (
             <article key={card.title} className="quad-card">
               <h2>{card.title}</h2>
-              <div className="quad-grid">
-                {card.items.map((item) => (
-                  <div key={item.label} className="quad-item">
-                    <img src={item.image} alt={item.label} />
-                    <span>{item.label}</span>
+              {card.isWelcome ? (
+                <>
+                  <p className="welcome-copy">Default shopper mode is on. Continue exploring the catalog, saved preferences, and fast checkout flow.</p>
+                  <div className="welcome-pills">
+                    <Link to="/products?sort=rating" className="welcome-pill">Top rated</Link>
+                    <Link to="/products?category=amazon-basics" className="welcome-pill">Amazon Basics</Link>
+                    <Link to="/orders/history" className="welcome-pill">Your orders</Link>
                   </div>
-                ))}
-              </div>
-              <Link to={card.link} className="category-link">See more</Link>
+                  <Link to={card.ctaLink} className="welcome-cta">{card.cta}</Link>
+                </>
+              ) : (
+                <>
+                  <div className="quad-grid">
+                    {card.items.map((item) => (
+                      <div key={item.label} className="quad-item">
+                        <img src={item.image} alt={item.label} onError={handleImageFallback} />
+                        <span>{item.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <Link to={card.link} className="category-link">See more</Link>
+                </>
+              )}
             </article>
           ))}
         </section>
@@ -140,7 +170,7 @@ const Home = () => {
             <div key={category.id} className="category-card">
               <h2>{category.name}</h2>
               <div className="category-card-image">
-                <img src={getCategoryThemeImage(category.slug)} alt={category.name} />
+                <img src={getCategoryThemeImage(category.slug)} alt={category.name} onError={handleImageFallback} />
               </div>
               <div className="category-card-inner">
                  <Link to={`/products?category=${category.slug}`} className="category-link">Shop now</Link>
@@ -160,18 +190,35 @@ const Home = () => {
           </div>
         </div>
 
-        {amazonBasics.length > 0 && (
-          <div className="product-row-container basics-container">
-            <h2>Explore Amazon Basics</h2>
+        {basicsRail.length > 0 && (
+          <section className="product-row-container basics-container">
+            <div className="section-headline">
+              <h2>Explore Amazon Basics</h2>
+              <Link to="/products?category=amazon-basics" className="category-link">See all Basics</Link>
+            </div>
             <div className="product-row">
-              {amazonBasics.map(product => (
+              {basicsRail.map(product => (
                 <div key={product.id} className="product-row-item">
                   <ProductCard product={product} />
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
+
+        <section className="product-row-container recommendations-container">
+          <div className="section-headline">
+            <h2>Customers also bought</h2>
+            <Link to="/products" className="category-link">View more</Link>
+          </div>
+          <div className="product-row">
+            {featuredProducts.slice(0, 4).map(product => (
+              <div key={`rec-${product.id}`} className="product-row-item">
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );

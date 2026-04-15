@@ -4,6 +4,15 @@ import { useCart } from '../../context/CartContext';
 import * as api from '../../services/api';
 import './Checkout.css';
 
+const FALLBACK_IMAGE =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+      <rect width="160" height="160" fill="#f3f3f3"/>
+      <text x="50%" y="50%" text-anchor="middle" fill="#565959" font-family="Arial" font-size="14">Image unavailable</text>
+    </svg>
+  `);
+
 const Checkout = () => {
   const { cartItems, cartSummary, clearCartLocally } = useCart();
   const navigate = useNavigate();
@@ -183,7 +192,13 @@ const Checkout = () => {
               <div className="checkout-items">
                 {cartItems.map((item) => (
                   <div key={item.id} className="checkout-item">
-                    <img src={item.product.images?.[0]?.imageUrl} alt={item.product.name} />
+                    <img
+                      src={item.product.images?.[0]?.imageUrl || FALLBACK_IMAGE}
+                      alt={item.product.name}
+                      onError={(event) => {
+                        event.currentTarget.src = FALLBACK_IMAGE;
+                      }}
+                    />
                     <div className="checkout-item-details">
                       <p className="ci-name">{item.product.name}</p>
                       <p className="ci-price"><strong>₹{parseFloat(item.product.price).toFixed(2)}</strong></p>

@@ -12,7 +12,8 @@ const quickLinks = [
   { label: 'Electronics', to: '/products?category=electronics' },
   { label: 'Books', to: '/products?category=books' },
   { label: 'Clothing', to: '/products?category=clothing' },
-  { label: 'Home & Kitchen', to: '/products?category=home-kitchen' }
+  { label: 'Home & Kitchen', to: '/products?category=home-kitchen' },
+  { label: 'Amazon Basics', to: '/products?category=amazon-basics' }
 ];
 
 const SecondaryNav = () => {

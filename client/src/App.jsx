@@ -19,9 +19,16 @@ import './styles/layout.css';
 function AppLayout() {
   const location = useLocation();
   const isCheckoutFlow = location.pathname === '/checkout';
+  const { notice, clearNotice } = useCart();
 
   return (
     <div className="app-shell">
+      {notice && (
+        <div className={`app-notice app-notice-${notice.type}`} role="status" onClick={clearNotice}>
+          {notice.message}
+        </div>
+      )}
+
       {isCheckoutFlow ? (
         <CheckoutHeader />
       ) : (

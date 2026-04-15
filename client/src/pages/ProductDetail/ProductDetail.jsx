@@ -9,7 +9,7 @@ import './ProductDetail.css';
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addItemToCart } = useCart();
+  const { addItemToCart, setNotice } = useCart();
   
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -20,6 +20,17 @@ const ProductDetail = () => {
   const [reviewEligibility, setReviewEligibility] = useState({ eligible: false, alreadyReviewed: false });
   const [reviewForm, setReviewForm] = useState({ rating: 5, title: '', comment: '' });
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [wishlisted, setWishlisted] = useState(false);
+
+  const fallbackImage =
+    'data:image/svg+xml;utf8,' +
+    encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+        <rect width="800" height="600" fill="#f3f3f3"/>
+        <text x="50%" y="50%" text-anchor="middle" fill="#565959" font-family="Arial" font-size="26">Image unavailable</text>
+      </svg>
+    `);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -45,6 +56,17 @@ const ProductDetail = () => {
         if (eligibilityRes.data.success) {
           setReviewEligibility(eligibilityRes.data.data);
         }
+
+        if (productRes.data.success && productRes.data.data?.category?.slug) {
+          const relatedRes = await api.getProducts({
+            category: productRes.data.data.category?.slug,
+            limit: 6,
+          });
+
+          if (relatedRes.data.success) {
+            setSuggestions(relatedRes.data.data.filter((candidate) => candidate.id !== productRes.data.data.id));
+          }
+        }
       } catch (err) {
         console.error('Error fetching product:', err);
       } finally {
@@ -69,10 +91,12 @@ const ProductDetail = () => {
   const handleWishlist = async () => {
     try {
       await api.addToWishlist(product.id);
-      alert('Added to wishlist');
+      setWishlisted(true);
+      setNotice({ type: 'success', message: 'Item saved to wishlist' });
+      setTimeout(() => setWishlisted(false), 1400);
     } catch (error) {
       console.error('Failed to add to wishlist', error);
-      alert('Unable to add to wishlist right now.');
+      setNotice({ type: 'error', message: 'Unable to save item to wishlist' });
     }
   };
 
@@ -163,12 +187,12 @@ const ProductDetail = () => {
               className={`pd-thumbnail ${activeImage === img.imageUrl ? 'active' : ''}`}
               onMouseEnter={() => setActiveImage(img.imageUrl)}
             >
-              <img src={img.imageUrl} alt={`Thumbnail ${idx}`} />
+              <img src={img.imageUrl} alt={`Thumbnail ${idx}`} onError={(event) => { event.currentTarget.src = fallbackImage; }} />
             </div>
           ))}
         </div>
         <div className="pd-main-image">
-          <img src={activeImage || 'https://via.placeholder.com/400'} alt={product.name} />
+          <img src={activeImage || fallbackImage} alt={product.name} onError={(event) => { event.currentTarget.src = fallbackImage; }} />
         </div>
       </div>
 
@@ -272,16 +296,45 @@ const ProductDetail = () => {
               </tbody>
             </table>
 
-            <button type="button" className="pd-wishlist-btn" onClick={handleWishlist}>Add to Wish List</button>
+            <button type="button" className="pd-wishlist-btn" onClick={handleWishlist}>
+              {wishlisted ? 'Saved to Wish List' : 'Add to Wish List'}
+            </button>
           </>
         )}
       </div>
+
+      <section className="pd-suggestions-section">
+        <h3>Customers who viewed this item also viewed</h3>
+        <div className="pd-suggestions-row">
+          {suggestions.slice(0, 5).map((suggestion) => (
+            <Link key={suggestion.id} to={`/products/${suggestion.id}`} className="pd-suggestion-card">
+              <img src={suggestion.images?.[0]?.imageUrl || fallbackImage} alt={suggestion.name} onError={(event) => { event.currentTarget.src = fallbackImage; }} />
+              <span>{suggestion.name}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <section className="pd-reviews-section">
         <h3>Customer Reviews</h3>
 
         {reviews.length === 0 ? (
-          <p className="pd-review-empty">No reviews yet for this product.</p>
+          <div className="pd-review-list">
+            {[
+              { id: 'sample-1', name: 'Anuj', rating: 5, title: 'Works exactly as expected', comment: 'Great value, fast delivery, and the product matches the description.' },
+              { id: 'sample-2', name: 'Neha', rating: 4, title: 'Good quality for the price', comment: 'Feels sturdy and is easy to use. Packaging could be better, but the item is solid.' },
+            ].map((review) => (
+              <article key={review.id} className="pd-review-card">
+                <div className="pd-review-head">
+                  <strong>{review.name}</strong>
+                  <span>Verified purchase</span>
+                </div>
+                <div className="pd-review-rating">Rating: {review.rating}/5</div>
+                <h4>{review.title}</h4>
+                <p>{review.comment}</p>
+              </article>
+            ))}
+          </div>
         ) : (
           <div className="pd-review-list">
             {reviews.map((review) => (

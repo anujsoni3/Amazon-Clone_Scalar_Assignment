@@ -138,6 +138,13 @@
   align-items: center;
 }
 
+.nav-language {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 40px;
+}
+
 .nav-item {
   display: flex;
   flex-direction: column;
