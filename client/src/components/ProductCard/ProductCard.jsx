@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import StarRating from '../StarRating/StarRating';
 import { useCart } from '../../context/CartContext';
+import { demoProducts } from '../../data/demoCatalog';
 import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
 import { formatPrice } from '../../utils/price';
 import './ProductCard.css';
@@ -13,12 +14,20 @@ const ProductCard = ({ product }) => {
   const [imageIndex, setImageIndex] = useState(0);
   const fallbackImage = getSizedFallback(600, 400, product.name.slice(0, 24));
   const imageCandidates = useMemo(() => {
-    const urls = (product.images || [])
+    const primaryUrls = (product.images || [])
       .map((img) => normalizeImageUrl(img.imageUrl, fallbackImage))
       .filter((url) => url && url !== fallbackImage);
 
-    return urls.length > 0 ? urls : [fallbackImage];
-  }, [product.images, fallbackImage]);
+    const backupUrls = demoProducts
+      .filter((item) => item.id !== product.id)
+      .flatMap((item) => item.images || [])
+      .map((img) => normalizeImageUrl(img.imageUrl, fallbackImage))
+      .filter((url) => url && url !== fallbackImage);
+
+    const uniqueUrls = [...new Set([...primaryUrls, ...backupUrls])];
+
+    return uniqueUrls.length > 0 ? uniqueUrls : [fallbackImage];
+  }, [product.id, product.images, fallbackImage]);
 
   const imageUrl = imageCandidates[Math.min(imageIndex, imageCandidates.length - 1)] || fallbackImage;
   const isOutOfStock = product.stockQty <= 0;
