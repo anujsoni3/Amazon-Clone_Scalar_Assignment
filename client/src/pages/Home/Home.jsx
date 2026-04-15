@@ -274,11 +274,11 @@ const Home = () => {
 
       <div className="home-content">
         <section className="top-cards-row">
-          {shopByGrid.map((card) => (
-            <article key={card.title} className="quad-card">
-              <h2>{card.title}</h2>
-              {card.isWelcome ? (
-                <>
+          {shopByGrid.map((card) => {
+            if (card.isWelcome) {
+              return (
+                <article key={card.title} className="quad-card">
+                  <h2>{card.title}</h2>
                   <p className="welcome-copy">Default shopper mode is on. Continue exploring the catalog, saved preferences, and fast checkout flow.</p>
                   <div className="welcome-pills">
                     <Link to="/products?sort=rating" className="welcome-pill">Top rated</Link>
@@ -286,22 +286,24 @@ const Home = () => {
                     <Link to="/orders/history" className="welcome-pill">Your orders</Link>
                   </div>
                   <Link to={card.ctaLink} className="welcome-cta">{card.cta}</Link>
-                </>
-              ) : (
-                <>
-                  <div className="quad-grid">
-                    {card.items.map((item) => (
-                      <div key={item.label} className="quad-item">
-                        <MultiSourceImage sources={item.images} alt={item.label} />
-                        <span>{item.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <Link to={card.link} className="category-link">See more</Link>
-                </>
-              )}
-            </article>
-          ))}
+                </article>
+              );
+            }
+
+            return (
+              <Link key={card.title} to={card.link} className="quad-card quad-card-link">
+                <h2>{card.title}</h2>
+                <div className="quad-grid">
+                  {card.items.map((item) => (
+                    <div key={item.label} className="quad-item">
+                      <MultiSourceImage sources={item.images} alt={item.label} />
+                      <span>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </Link>
+            );
+          })}
         </section>
 
         <div className="category-row">
