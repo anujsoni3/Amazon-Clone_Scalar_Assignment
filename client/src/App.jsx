@@ -4,7 +4,7 @@ import Navbar from './components/Navbar/Navbar';
 import SecondaryNav from './components/Navbar/SecondaryNav';
 import CheckoutHeader from './components/Navbar/CheckoutHeader';
 import Footer from './components/Footer/Footer';
-import { CartProvider } from './context/CartContext';
+import { CartProvider, useCart } from './context/CartContext';
 
 import Home from './pages/Home/Home';
 import ProductListing from './pages/ProductListing/ProductListing';
