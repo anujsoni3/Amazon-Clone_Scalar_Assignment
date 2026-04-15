@@ -1,6 +1,7 @@
 const prisma = require('../lib/prisma');
 const { Prisma } = require('@prisma/client');
 const { clearCacheByPrefix } = require('../lib/queryCache');
+const { getIO } = require('../lib/socket');
 
 const DEFAULT_USER_ID = 1;
 const SHIPPING_THRESHOLD = 499; // Free shipping above ₹499
@@ -30,6 +31,31 @@ const ORDER_ITEM_INCLUDE = {
       },
     },
   },
+};
+
+const emitOrderRealtimeEvents = ({ order, productIds = [], includeCartUpdate = true }) => {
+  const io = getIO();
+  if (!io) return;
+
+  io.emit('order:created', {
+    userId: DEFAULT_USER_ID,
+    orderId: order.id,
+    at: new Date().toISOString(),
+  });
+
+  if (productIds.length > 0) {
+    io.emit('inventory:updated', {
+      productIds,
+      at: new Date().toISOString(),
+    });
+  }
+
+  if (includeCartUpdate) {
+    io.emit('cart:updated', {
+      userId: DEFAULT_USER_ID,
+      at: new Date().toISOString(),
+    });
+  }
 };
 
 const findReplayOrder = async (idempotencyKey) => {
@@ -139,6 +165,11 @@ const placeOrder = async (req, res, next) => {
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 
     clearCacheByPrefix('products:');
+    emitOrderRealtimeEvents({
+      order,
+      productIds: order.items.map((item) => item.productId),
+      includeCartUpdate: true,
+    });
 
     res.status(201).json({ success: true, data: order });
   } catch (err) {
@@ -232,6 +263,11 @@ const placeBuyNowOrder = async (req, res, next) => {
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 
     clearCacheByPrefix('products:');
+    emitOrderRealtimeEvents({
+      order,
+      productIds: order.items.map((item) => item.productId),
+      includeCartUpdate: false,
+    });
 
     res.status(201).json({ success: true, data: order });
   } catch (err) {

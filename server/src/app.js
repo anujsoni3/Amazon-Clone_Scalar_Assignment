@@ -1,4 +1,5 @@
 const express = require('express');
+const http = require('http');
 const cors = require('cors');
 require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 
@@ -10,6 +11,7 @@ const wishlistRoutes = require('./routes/wishlist');
 const reviewRoutes = require('./routes/reviews');
 const errorHandler = require('./middleware/errorHandler');
 const { createRateLimiter } = require('./middleware/rateLimiter');
+const { initSocket } = require('./lib/socket');
 
 const app = express();
 
@@ -66,7 +68,10 @@ const DEFAULT_PORT = parseInt(process.env.PORT || '5000', 10);
 const MAX_PORT_RETRIES = 5;
 
 const startServer = (port, attempt = 0) => {
-  const server = app.listen(port, () => {
+  const server = http.createServer(app);
+  initSocket(server);
+
+  server.listen(port, () => {
     console.log(`🚀 Server running on http://localhost:${port}`);
   });
 

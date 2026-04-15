@@ -1,7 +1,14 @@
 const prisma = require('../lib/prisma');
 const { clearCacheByPrefix } = require('../lib/queryCache');
+const { getIO } = require('../lib/socket');
 
 const DEFAULT_USER_ID = 1;
+
+const emitCartUpdated = () => {
+  const io = getIO();
+  if (!io) return;
+  io.emit('cart:updated', { userId: DEFAULT_USER_ID, at: new Date().toISOString() });
+};
 
 /**
  * GET /api/cart
@@ -94,6 +101,7 @@ const addToCart = async (req, res, next) => {
     });
 
     clearCacheByPrefix('products:');
+    emitCartUpdated();
 
     res.status(201).json({ success: true, data: cartItem });
   } catch (err) {
@@ -156,6 +164,7 @@ const updateCartItem = async (req, res, next) => {
     });
 
     clearCacheByPrefix('products:');
+    emitCartUpdated();
 
     res.json({ success: true, data: updated });
   } catch (err) {
@@ -183,6 +192,7 @@ const removeFromCart = async (req, res, next) => {
     await prisma.cartItem.delete({ where: { id: parsedItemId } });
 
     clearCacheByPrefix('products:');
+    emitCartUpdated();
 
     res.json({ success: true, message: 'Item removed from cart' });
   } catch (err) {

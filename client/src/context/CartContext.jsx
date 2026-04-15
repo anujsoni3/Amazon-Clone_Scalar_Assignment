@@ -1,6 +1,7 @@
-import { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import * as api from '../services/api';
 import { demoCartItems, demoProducts } from '../data/demoCatalog';
+import { getSocket } from '../services/socket';
 
 const CartContext = createContext();
 const LOCAL_CART_KEY = 'amazon-clone-local-cart';
@@ -44,9 +45,9 @@ export const CartProvider = ({ children }) => {
   // Fetch cart on mount
   useEffect(() => {
     fetchCart();
-  }, []);
+  }, [fetchCart]);
 
-  const fetchCart = async () => {
+  const fetchCart = useCallback(async () => {
     try {
       const { data } = await api.getCart();
       if (data.success) {
@@ -83,7 +84,41 @@ export const CartProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const socket = getSocket();
+
+    const handleCartUpdated = (payload) => {
+      if (payload?.userId !== 1) return;
+      if (useLocalCart) return;
+      fetchCart();
+    };
+
+    const handleOrderCreated = (payload) => {
+      if (payload?.userId !== 1) return;
+      setNotice({ type: 'success', message: 'Order placed in another tab. Cart refreshed.' });
+      if (!useLocalCart) {
+        fetchCart();
+      }
+    };
+
+    const handleInventoryUpdated = () => {
+      if (!useLocalCart) {
+        fetchCart();
+      }
+    };
+
+    socket.on('cart:updated', handleCartUpdated);
+    socket.on('order:created', handleOrderCreated);
+    socket.on('inventory:updated', handleInventoryUpdated);
+
+    return () => {
+      socket.off('cart:updated', handleCartUpdated);
+      socket.off('order:created', handleOrderCreated);
+      socket.off('inventory:updated', handleInventoryUpdated);
+    };
+  }, [fetchCart, useLocalCart]);
 
   const addItemToCart = async (productId, quantity = 1, productData = null) => {
     if (useLocalCart) {
