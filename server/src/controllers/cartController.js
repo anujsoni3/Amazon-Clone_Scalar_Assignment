@@ -121,6 +121,10 @@ const updateCartItem = async (req, res, next) => {
     const parsedItemId = parseInt(itemId, 10);
     const parsedQty = parseInt(quantity, 10);
 
+    if (!parsedItemId || Number.isNaN(parsedItemId)) {
+      return res.status(400).json({ success: false, error: 'Valid cart item id is required' });
+    }
+
     if (!parsedQty || Number.isNaN(parsedQty) || parsedQty < 1) {
       return res.status(400).json({ success: false, error: 'Quantity must be at least 1' });
     }
@@ -180,6 +184,10 @@ const removeFromCart = async (req, res, next) => {
   try {
     const { itemId } = req.params;
     const parsedItemId = parseInt(itemId, 10);
+
+    if (!parsedItemId || Number.isNaN(parsedItemId)) {
+      return res.status(400).json({ success: false, error: 'Valid cart item id is required' });
+    }
 
     const cartItem = await prisma.cartItem.findFirst({
       where: { id: parsedItemId, userId: DEFAULT_USER_ID },

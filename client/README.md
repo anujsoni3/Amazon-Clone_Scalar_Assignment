@@ -4,7 +4,7 @@ React frontend for the Amazon Clone project.
 
 ## Live URL
 
-- Frontend: https://amazon-clone-6kt32qqhn-anujsoni3s-projects.vercel.app
+- Frontend: [https://amazon-clone-6kt32qqhn-anujsoni3s-projects.vercel.app](https://amazon-clone-6kt32qqhn-anujsoni3s-projects.vercel.app)
 
 ## Scope
 
