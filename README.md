@@ -196,22 +196,11 @@ erDiagram
 - **Responsive Design:** Mobile-first CSS with breakpoints for tablet (768px) and desktop (1024px+)
 - **Search & Filtering:** Category-based navigation, text search, price range filtering, ratings-based sorting
 
-## 9. Screenshots
+## 9. Screenshots and Evidence
 
-Add project screenshots to docs/screenshots using these names:
+This repository includes a dedicated screenshot guide in [docs/screenshots/README.md](docs/screenshots/README.md) with the recommended filenames and capture checklist.
 
-- home.png
-- product-listing.png
-- product-detail.png
-- cart.png
-- checkout.png
-- account.png
-- wishlist.png
-- orders.png
-- email-confirmation.png
-- brainstorm-ideas.png (development brainstorming notes)
-
-A quick placeholder guide exists in docs/screenshots/README.md.
+The screenshots folder also includes the development brainstorming image referenced as `brainstorm-ideas.png` for process documentation.
 
 ## 10. Local Setup
 
