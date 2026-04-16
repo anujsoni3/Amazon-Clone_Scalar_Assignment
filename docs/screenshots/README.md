@@ -13,6 +13,7 @@ Recommended filenames:
 - wishlist.png
 - orders.png
 - email-confirmation.png
+- brainstorm-ideas.png (development process documentation)
 
 Tip:
 Use the same browser width for all desktop shots to keep the README visually consistent.
@@ -50,7 +51,8 @@ Use the same browser width for all desktop shots to keep the README visually con
 | wishlist.png | Yes |
 | orders.png | Yes |
 | email-confirmation.png | Yes |
+| brainstorm-ideas.png | Yes |
 
-Additional screenshot included:
+Additional screenshots included:
 
 - review.png

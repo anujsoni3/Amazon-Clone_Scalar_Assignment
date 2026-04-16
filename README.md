@@ -98,7 +98,44 @@ Key schema choices:
 - Shipping address is persisted as JSON on orders.
 - Address and payment models support account realism.
 
-## 8. Screenshots
+## 8. Development Approach & Key Decisions
+
+### Email Notifications
+- Implemented as **async, non-blocking** dispatch after order placement
+- Uses Nodemailer with Gmail SMTP for production delivery
+- Branded HTML template with order details, items, and shipping address
+- Fallback to text format for compatibility
+
+### Address & Shipping Management
+- Saved addresses with autofill on checkout
+- Users can select or provide new address at purchase time
+- Addresses persisted as structured data for account reuse
+
+### Deployment Architecture
+- **Backend:** Node.js + Express on Render (scalable, PostgreSQL-ready)
+- **Database:** PostgreSQL (Neon serverless) for reliability and ACID compliance
+- Removed Redis to simplify deployment footprint while maintaining performance
+- **Frontend:** React on Vercel for edge deployment and automatic CI/CD
+- CORS configured to support both local development and production URLs
+
+### Data Seeding Strategy
+- Comprehensive seed script with 250+ products, 30 categories, 724 product images
+- Sample orders pre-populated for order history testing
+- User addresses and payment methods included for realistic UX
+- Seed runs during `npm run db:seed` (development) or Render build process
+
+### Product & Media Management
+- Dynamic product loading from PostgreSQL
+- Product images served with optimized URLs from database
+- Catalog extensible via seed or admin dashboard (future)
+
+### Frontend Features
+- Wishlist with persistent storage
+- Order history with status tracking
+- Account page with profile, addresses, and payment methods
+- Responsive design for mobile, tablet, desktop
+
+## 9. Screenshots
 
 Add project screenshots to docs/screenshots using these names:
 
@@ -111,10 +148,11 @@ Add project screenshots to docs/screenshots using these names:
 - wishlist.png
 - orders.png
 - email-confirmation.png
+- brainstorm-ideas.png (development brainstorming notes)
 
 A quick placeholder guide exists in docs/screenshots/README.md.
 
-## 9. Local Setup
+## 10. Local Setup
 
 ### Backend
 
@@ -133,7 +171,7 @@ npm install
 npm run dev
 ```
 
-## 10. Environment Variables
+## 11. Environment Variables
 
 ### server/.env
 
@@ -153,7 +191,7 @@ npm run dev
 
 - VITE_API_URL
 
-## 11. Render Deployment Guide
+## 12. Render Deployment Guide
 
 You can deploy using the included blueprint file:
 
@@ -179,13 +217,13 @@ Example:
 
 - VITE_API_URL=<https://your-api-name.onrender.com/api>
 
-## 12. Submission Notes and Assumptions
+## 13. Submission Notes and Assumptions
 
 - The assignment explicitly states that login is not required, so a default seeded user is used.
 - Redis was removed to keep runtime simple and portable for deployment.
 - Email sending is production-ready when SMTP credentials are configured.
 
-## 13. Additional Docs
+## 14. Additional Docs
 
 - Frontend docs: client/README.md
 - Backend docs: server/README.md
