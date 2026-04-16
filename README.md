@@ -29,7 +29,7 @@ A multi-step checkout form grabbing user delivery credentials. Processes into th
 
 ## Core Database Schema Choices
 
-The database is normalized across **7 core tables**:
+The database is normalized across **9 core tables/models**:
 - `users`: Simulates the authentication (Defaulted to `Anuj Soni`).
 - `categories`: Contains slugs to categorize items.
 - `products`: Links to `categories`. Holds current price, ratings, descriptions and stock status.
@@ -37,6 +37,8 @@ The database is normalized across **7 core tables**:
 - `cart_items`: Holds active user carts.
 - `orders`: Stores the shipping address as JSON and global subtotal/status. Primary Key using UUIDs to prevent enumeration.
 - `order_items`: The critical relational mapping. Stores a **snapshot** of the product price so past orders aren't retroactively changed if a product is put on sale later.
+- `wishlists`: Stores products saved for later by user.
+- `reviews`: Stores product ratings/reviews and verified purchase metadata.
 
 ## Setup Instructions
 
@@ -68,5 +70,8 @@ The database is normalized across **7 core tables**:
    ```
 3. Open your browser to the local URL provided by Vite (e.g. `http://localhost:5173`).
 
----
-*(Additional documentation to be added regarding production deployment)*
+## Notes & Assumptions
+
+- Authentication is intentionally simplified to a seeded default user for assignment scope.
+- Email notifications are not implemented (bonus feature).
+- For local development, run backend and frontend separately as documented above.

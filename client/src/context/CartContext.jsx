@@ -30,8 +30,6 @@ const buildSummary = (items) => {
   };
 };
 
-const normalizeDemoCart = () => demoCartItems.map((item) => ({ ...item }));
-
 // eslint-disable-next-line react-refresh/only-export-components
 export const useCart = () => useContext(CartContext);
 
@@ -43,40 +41,19 @@ export const CartProvider = ({ children }) => {
   const [useLocalCart, setUseLocalCart] = useState(false);
   const [inventoryPulseAt, setInventoryPulseAt] = useState(null);
 
-  // Fetch cart on mount
-  useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
-
   const fetchCart = useCallback(async () => {
     try {
       const { data } = await api.getCart();
       if (data.success) {
-        if (data.data.length > 0) {
-          setUseLocalCart(false);
-          setCartItems(data.data);
-          setCartSummary(data.summary);
-          writeLocalCart(data.data, data.summary);
-        } else {
-          const local = readLocalCart();
-          if (local?.items?.length > 0) {
-            setUseLocalCart(true);
-            setCartItems(local.items);
-            setCartSummary(local.summary || buildSummary(local.items));
-          } else {
-            const demoItems = normalizeDemoCart();
-            const summary = buildSummary(demoItems);
-            setUseLocalCart(true);
-            setCartItems(demoItems);
-            setCartSummary(summary);
-            writeLocalCart(demoItems, summary);
-          }
-        }
+        setUseLocalCart(false);
+        setCartItems(data.data || []);
+        setCartSummary(data.summary || { itemCount: 0, totalQty: 0, subtotal: 0 });
+        writeLocalCart(data.data || [], data.summary || { itemCount: 0, totalQty: 0, subtotal: 0 });
       }
     } catch (error) {
       console.error('Failed to fetch cart:', error);
       const local = readLocalCart();
-      const demoItems = local?.items?.length ? local.items : normalizeDemoCart();
+      const demoItems = local?.items?.length ? local.items : [];
       const summary = local?.summary || buildSummary(demoItems);
       setUseLocalCart(true);
       setCartItems(demoItems);
@@ -86,6 +63,11 @@ export const CartProvider = ({ children }) => {
       setLoading(false);
     }
   }, []);
+
+  // Fetch cart on mount
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
 
   useEffect(() => {
     const socket = getSocket();

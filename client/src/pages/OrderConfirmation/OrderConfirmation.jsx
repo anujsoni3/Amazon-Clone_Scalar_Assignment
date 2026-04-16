@@ -34,7 +34,7 @@ const OrderConfirmation = () => {
       <div className="order-conf-box">
         <div className="success-checkmark">✓</div>
         <h1>Order placed, thank you!</h1>
-        <p>Confirmation will be sent to your registered email.</p>
+        <p>Your order confirmation is available in Order History.</p>
         
         <div className="order-details-card">
           <div className="od-row">

@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader/Loader';
 import { useCart } from '../../context/CartContext';
 import * as api from '../../services/api';
-import { demoWishlistItems } from '../../data/demoCatalog';
 import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
 import { formatPrice } from '../../utils/price';
 import './Wishlist.css';
@@ -35,29 +34,28 @@ const Wishlist = () => {
     try {
       const res = await api.getWishlist();
       if (res.data.success) {
-        if (res.data.data.length > 0) {
-          setItems(res.data.data);
-          writeLocalWishlist(res.data.data);
-          return;
-        }
+        const nextItems = res.data.data || [];
+        setItems(nextItems);
+        writeLocalWishlist(nextItems);
+        setLoading(false);
+        return;
       }
     } catch (error) {
       console.error('Failed to fetch wishlist', error);
       setNotice({ type: 'error', message: 'Unable to load wishlist right now' });
-    } finally {
-      const local = readLocalWishlist();
-      if (local?.length > 0) {
-        setItems(local);
-      } else {
-        setItems(demoWishlistItems);
-        writeLocalWishlist(demoWishlistItems);
-      }
-      setLoading(false);
     }
+
+    const local = readLocalWishlist();
+    const fallback = local?.length ? local : [];
+    setItems(fallback);
+    setLoading(false);
   }, [setNotice]);
 
   useEffect(() => {
-    fetchWishlist();
+    const start = setTimeout(() => {
+      fetchWishlist();
+    }, 0);
+    return () => clearTimeout(start);
   }, [fetchWishlist]);
 
   const handleRemove = async (itemId) => {

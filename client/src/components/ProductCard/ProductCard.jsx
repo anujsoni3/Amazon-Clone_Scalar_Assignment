@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import StarRating from '../StarRating/StarRating';
 import { useCart } from '../../context/CartContext';
-import { demoProducts } from '../../data/demoCatalog';
 import { getSizedFallback, normalizeImageUrl, withImageFallback } from '../../utils/image';
 import { formatPrice } from '../../utils/price';
 import './ProductCard.css';
@@ -18,16 +17,10 @@ const ProductCard = ({ product, stockUpdated = false }) => {
       .map((img) => normalizeImageUrl(img.imageUrl, fallbackImage))
       .filter((url) => url && url !== fallbackImage);
 
-    const backupUrls = demoProducts
-      .filter((item) => item.id !== product.id)
-      .flatMap((item) => item.images || [])
-      .map((img) => normalizeImageUrl(img.imageUrl, fallbackImage))
-      .filter((url) => url && url !== fallbackImage);
-
-    const uniqueUrls = [...new Set([...primaryUrls, ...backupUrls])];
+    const uniqueUrls = [...new Set(primaryUrls)];
 
     return uniqueUrls.length > 0 ? uniqueUrls : [fallbackImage];
-  }, [product.id, product.images, fallbackImage]);
+  }, [product.images, fallbackImage]);
 
   const imageUrl = imageCandidates[Math.min(imageIndex, imageCandidates.length - 1)] || fallbackImage;
   const isOutOfStock = product.stockQty <= 0;
