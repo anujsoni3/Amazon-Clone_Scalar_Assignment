@@ -15,11 +15,14 @@ model User {
   id        Int        @id @default(autoincrement())
   name      String
   email     String     @unique
+  phone     String?
   createdAt DateTime   @default(now()) @map("created_at")
   cartItems CartItem[]
   orders    Order[]
   wishlists Wishlist[]
   reviews   Review[]
+  addresses Address[]
+  paymentCards PaymentCard[]
 
   @@map("users")
 }
@@ -149,4 +152,38 @@ enum OrderStatus {
   CONFIRMED
   SHIPPED
   DELIVERED
+}
+
+model Address {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @map("user_id")
+  fullName     String   @map("full_name")
+  phoneNumber  String   @map("phone_number")
+  street       String
+  city         String
+  state        String
+  postalCode   String   @map("postal_code")
+  country      String   @default("India")
+  isDefault    Boolean  @default(false) @map("is_default")
+  createdAt    DateTime @default(now()) @map("created_at")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("addresses")
+}
+
+model PaymentCard {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @map("user_id")
+  cardholderName String @map("cardholder_name")
+  cardNumber   String   @map("card_number")
+  expiryMonth  String   @map("expiry_month")
+  expiryYear   String   @map("expiry_year")
+  cvv          String   @db.VarChar(4)
+  isDefault    Boolean  @default(false) @map("is_default")
+  createdAt    DateTime @default(now()) @map("created_at")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("payment_cards")
 }

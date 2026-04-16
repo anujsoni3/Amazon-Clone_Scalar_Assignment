@@ -44,4 +44,16 @@ export const getProductReviews = (productId, params) => api.get(`/reviews/produc
 export const getReviewEligibility = (productId) => api.get(`/reviews/eligibility/${productId}`);
 export const upsertProductReview = (productId, payload) => api.post(`/reviews/product/${productId}`, payload);
 
+// Account & Profile
+export const getUserProfile = () => api.get('/account/profile');
+export const getAddresses = () => api.get('/account/addresses');
+export const createAddress = (payload) => api.post('/account/addresses', payload);
+export const updateAddress = (id, payload) => api.put(`/account/addresses/${id}`, payload);
+export const deleteAddress = (id) => api.delete(`/account/addresses/${id}`);
+
+export const getPaymentCards = () => api.get('/account/payment-cards');
+export const createPaymentCard = (payload) => api.post('/account/payment-cards', payload);
+export const setDefaultPaymentCard = (id) => api.put(`/account/payment-cards/${id}/default`);
+export const deletePaymentCard = (id) => api.delete(`/account/payment-cards/${id}`);
+
 export default api;

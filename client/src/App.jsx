@@ -14,6 +14,7 @@ import Checkout from './pages/Checkout/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation/OrderConfirmation';
 import OrderHistory from './pages/OrderHistory/OrderHistory';
 import Wishlist from './pages/Wishlist/Wishlist';
+import Account from './pages/Account/Account';
 
 import './styles/layout.css';
 
@@ -49,6 +50,7 @@ function AppLayout() {
           <Route path="/order-confirmation/:id" element={<OrderConfirmation />} />
           <Route path="/orders/history" element={<OrderHistory />} />
           <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/account" element={<Account />} />
         </Routes>
       </main>
 

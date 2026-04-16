@@ -9,6 +9,7 @@ const cartRoutes = require('./routes/cart');
 const orderRoutes = require('./routes/orders');
 const wishlistRoutes = require('./routes/wishlist');
 const reviewRoutes = require('./routes/reviews');
+const accountRoutes = require('./routes/account');
 const errorHandler = require('./middleware/errorHandler');
 const { createRateLimiter } = require('./middleware/rateLimiter');
 const { initSocket } = require('./lib/socket');
@@ -55,6 +56,7 @@ app.use('/api/cart', writeLimiter, cartRoutes);
 app.use('/api/orders', checkoutLimiter, orderRoutes);
 app.use('/api/wishlist', writeLimiter, wishlistRoutes);
 app.use('/api/reviews', writeLimiter, reviewRoutes);
+app.use('/api/account', writeLimiter, accountRoutes);
 
 // ── 404 handler ───────────────────────────────────────────────────────
 app.use((req, res) => {

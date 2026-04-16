@@ -32,7 +32,7 @@ const normalizeDummyProducts = (payload) => {
       sourceKey: `dummyjson:${item.id}`,
       name: item.title || `Dummy Product ${item.id}`,
       description: item.description || 'No description available.',
-      price: Number(item.price || 0),
+      price: Number((item.price || 0) * 83),
       stockQty: Math.max(0, parseInt(item.stock || 0, 10)),
       rating: clampRating(item.rating),
       reviewCount: Math.max(0, parseInt(item?.reviews?.length || 0, 10)),
@@ -54,7 +54,7 @@ const normalizeFreeProducts = (payload) => {
       sourceKey: `freeapi:${item.id}`,
       name: item.name || `Free API Product ${item.id}`,
       description: item.description || 'No description available.',
-      price: Number(item.priceCents || 0) / 100,
+      price: Number((item.priceCents || 0) / 100 * 83),
       stockQty: 100,
       rating: clampRating(ratingObj.stars),
       reviewCount: Math.max(0, parseInt(ratingObj.count || 0, 10)),
@@ -131,6 +131,8 @@ async function main() {
   await runWithRetry(() => prisma.orderItem.deleteMany(), 'delete order items');
   await runWithRetry(() => prisma.order.deleteMany(), 'delete orders');
   await runWithRetry(() => prisma.cartItem.deleteMany(), 'delete cart items');
+  await runWithRetry(() => prisma.paymentCard.deleteMany(), 'delete payment cards');
+  await runWithRetry(() => prisma.address.deleteMany(), 'delete addresses');
   await runWithRetry(() => prisma.productImage.deleteMany(), 'delete product images');
   await runWithRetry(() => prisma.product.deleteMany(), 'delete products');
   await runWithRetry(() => prisma.category.deleteMany(), 'delete categories');
@@ -142,9 +144,32 @@ async function main() {
       id: 1,
       name: 'Anuj',
       email: 'anuj@amazon.com',
+      phone: '+91-9876543210',
+      addresses: {
+        create: {
+          fullName: 'Anuj Kumar',
+          phoneNumber: '+91-9876543210',
+          street: 'Plot No. 123, MG Road, Nagpur',
+          city: 'Nagpur',
+          state: 'Maharashtra',
+          postalCode: '440018',
+          country: 'India',
+          isDefault: true,
+        },
+      },
+      paymentCards: {
+        create: {
+          cardholderName: 'ANUJ KUMAR',
+          cardNumber: '4111111111111111',
+          expiryMonth: '12',
+          expiryYear: '2026',
+          cvv: '123',
+          isDefault: true,
+        },
+      },
     },
-  }), 'create default user');
-  console.log('Default user created.');
+  }), 'create default user with address and card');
+  console.log('Default user, address, and payment card created.');
 
   const categoryMap = new Map();
 

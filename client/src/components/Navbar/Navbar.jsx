@@ -97,10 +97,10 @@ const Navbar = () => {
             <span className="nav-line-2">EN</span>
           </div>
 
-          <div className="nav-item nav-border hide-on-mobile">
+          <Link to="/account" className="nav-item nav-border hide-on-mobile">
             <span className="nav-line-1">Hello, Anuj</span>
             <span className="nav-line-2">Your account</span>
-          </div>
+          </Link>
 
           <Link to="/orders/history" className="nav-item nav-border hide-on-mobile">
             <span className="nav-line-1">Returns</span>
