@@ -65,6 +65,15 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Amazon Clone API is running 🚀' });
 });
 
+// ── Monitor-friendly status routes ────────────────────────────────────
+app.get('/', (req, res) => {
+  res.status(200).json({ status: 'ok', service: 'amazon-clone-api' });
+});
+
+app.get('/status', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 // ── Routes ────────────────────────────────────────────────────────────
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
