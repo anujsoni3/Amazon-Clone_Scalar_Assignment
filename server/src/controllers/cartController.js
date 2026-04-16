@@ -186,7 +186,8 @@ const removeFromCart = async (req, res, next) => {
     });
 
     if (!cartItem) {
-      return res.status(404).json({ success: false, error: 'Cart item not found' });
+      // Treat delete as idempotent: if already gone, operation is still successful.
+      return res.json({ success: true, message: 'Item already removed' });
     }
 
     await prisma.cartItem.delete({ where: { id: parsedItemId } });
