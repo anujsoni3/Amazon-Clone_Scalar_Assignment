@@ -3,7 +3,7 @@ services:
     name: amazon-clone-api
     runtime: node
     rootDir: server
-    buildCommand: npm install && npx prisma generate
+    buildCommand: npm install --include=dev && npx prisma@5.22.0 generate
     startCommand: npm start
     autoDeploy: true
     envVars:

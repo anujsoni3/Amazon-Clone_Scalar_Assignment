@@ -21,6 +21,7 @@
   "author": "Anuj",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
@@ -30,7 +31,6 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@prisma/client": "^5.22.0",
     "nodemon": "^3.1.14",
     "prisma": "^5.22.0"
   },
