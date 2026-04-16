@@ -364,7 +364,6 @@ const Home = () => {
             );
           })}
         </div>
-        </div>
 
         <div className="product-row-container">
           <h2>Highly Rated Products</h2>
