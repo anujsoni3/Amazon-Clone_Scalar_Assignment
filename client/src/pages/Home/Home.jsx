@@ -34,6 +34,7 @@ const Home = () => {
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [amazonBasics, setAmazonBasics] = useState([]);
+  const [categoryProducts, setCategoryProducts] = useState({});
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -76,6 +77,7 @@ const Home = () => {
       let nextCategories = [];
       let nextFeaturedProducts = [];
       let nextAmazonBasics = [];
+      let nextCategoryProducts = {};
 
       try {
         const [catsRes, prodsRes, basicsRes] = await Promise.all([
@@ -87,6 +89,21 @@ const Home = () => {
         if (catsRes.data.success && catsRes.data.data.length > 0) nextCategories = catsRes.data.data;
         if (prodsRes.data.success && prodsRes.data.data.length > 0) nextFeaturedProducts = prodsRes.data.data;
         if (basicsRes.data?.success && basicsRes.data.data.length > 0) nextAmazonBasics = basicsRes.data.data;
+
+        // Fetch products for first 4 categories
+        const categoryFetches = nextCategories.slice(0, 4).map(cat =>
+          api.getProducts({ category: cat.slug, limit: 4 })
+            .then(res => ({
+              categoryId: cat.id,
+              products: res.data.success ? res.data.data : []
+            }))
+            .catch(() => ({ categoryId: cat.id, products: [] }))
+        );
+
+        const categoryResults = await Promise.all(categoryFetches);
+        categoryResults.forEach(({ categoryId, products }) => {
+          nextCategoryProducts[categoryId] = products;
+        });
       } catch (err) {
         console.error('Error fetching home data:', err);
       } finally {
@@ -97,6 +114,7 @@ const Home = () => {
         setCategories(nextCategories);
         setFeaturedProducts(nextFeaturedProducts);
         setAmazonBasics(nextAmazonBasics);
+        setCategoryProducts(nextCategoryProducts);
         setLoading(false);
       }
     };
@@ -307,17 +325,45 @@ const Home = () => {
         </section>
 
         <div className="category-row">
-          {categories.slice(0, 4).map(category => (
-            <Link key={category.id} to={`/products?category=${category.slug}`} className="category-card category-card-link">
-              <h2>{category.name}</h2>
-              <div className="category-card-image">
-                <MultiSourceImage sources={getCategoryThemeImages(category.slug)} alt={category.name} />
-              </div>
-              <div className="category-card-inner">
-                <span className="category-link">Shop now</span>
-              </div>
-            </Link>
-          ))}
+          {categories.slice(0, 4).map(category => {
+            const categoryItems = categoryProducts[category.id] || [];
+            return (
+              <Link key={category.id} to={`/products?category=${category.slug}`} className="category-card category-card-link">
+                <h2>{category.name}</h2>
+                <div className="category-products-grid">
+                  {categoryItems.length > 0 ? (
+                    categoryItems.slice(0, 4).map((product, idx) => (
+                      <div key={`${product.id}-${idx}`} className="category-product-item">
+                        <div className="category-product-image">
+                          {product.images && product.images[0] ? (
+                            <img
+                              src={normalizeImageUrl(product.images[0].imageUrl, getSizedFallback(200, 200, product.name.slice(0, 12)))}
+                              alt={product.name}
+                              onError={(e) => withImageFallback(e, getSizedFallback(200, 200, product.name.slice(0, 12)))}
+                            />
+                          ) : (
+                            <img
+                              src={getSizedFallback(200, 200, product.name.slice(0, 12))}
+                              alt={product.name}
+                            />
+                          )}
+                        </div>
+                        <p className="category-product-name">{product.name.slice(0, 30)}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="category-card-image">
+                      <MultiSourceImage sources={getCategoryThemeImages(category.slug)} alt={category.name} />
+                    </div>
+                  )}
+                </div>
+                <div className="category-card-inner">
+                  <span className="category-link">Shop now</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
         </div>
 
         <div className="product-row-container">
