@@ -267,8 +267,8 @@
 }
 
 .category-link:hover {
-  color: var(--color-link-hover);
-  text-decoration: underline;
+  color: var(--color-link);
+  text-decoration: none;
 }
 
 .section-headline {

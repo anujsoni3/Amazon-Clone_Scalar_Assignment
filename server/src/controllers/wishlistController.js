@@ -16,7 +16,7 @@ const getWishlist = async (req, res, next) => {
       include: {
         product: {
           include: {
-            images: { where: { isPrimary: true }, take: 1 },
+            images: { take: 3 },
             category: { select: { id: true, name: true, slug: true } },
           },
         },
@@ -60,7 +60,7 @@ const addToWishlist = async (req, res, next) => {
       include: {
         product: {
           include: {
-            images: { where: { isPrimary: true }, take: 1 },
+            images: { take: 3 },
             category: { select: { id: true, name: true, slug: true } },
           },
         },

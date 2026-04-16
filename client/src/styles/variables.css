@@ -45,7 +45,7 @@ a {
 
 a:hover {
   color: var(--color-link-hover);
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 /* Common Utility Classes */

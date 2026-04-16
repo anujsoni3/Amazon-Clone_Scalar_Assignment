@@ -146,16 +146,28 @@ async function main() {
       email: 'anuj@amazon.com',
       phone: '+91-9876543210',
       addresses: {
-        create: {
-          fullName: 'Anuj Kumar',
-          phoneNumber: '+91-9876543210',
-          street: 'Plot No. 123, MG Road, Nagpur',
-          city: 'Nagpur',
-          state: 'Maharashtra',
-          postalCode: '440018',
-          country: 'India',
-          isDefault: true,
-        },
+        create: [
+          {
+            fullName: 'Anuj Kumar',
+            phoneNumber: '+91-9876543210',
+            street: 'Plot No. 123, MG Road, Nagpur',
+            city: 'Nagpur',
+            state: 'Maharashtra',
+            postalCode: '440018',
+            country: 'India',
+            isDefault: true,
+          },
+          {
+            fullName: 'Anuj K.',
+            phoneNumber: '+91-8765432109',
+            street: 'Connaught Place, New Delhi',
+            city: 'Delhi',
+            state: 'Delhi',
+            postalCode: '110001',
+            country: 'India',
+            isDefault: false,
+          },
+        ],
       },
       paymentCards: {
         create: {
