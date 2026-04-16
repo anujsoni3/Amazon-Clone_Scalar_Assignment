@@ -3,15 +3,15 @@
   flex-wrap: wrap;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 20px;
-  gap: 30px;
+  padding: 24px 16px;
+  gap: 24px;
 }
 
 .pd-top-layout {
   width: 100%;
   display: grid;
-  grid-template-columns: minmax(300px, 1.05fr) minmax(380px, 1.25fr) minmax(260px, 320px);
-  gap: 24px;
+  grid-template-columns: minmax(300px, 1.02fr) minmax(360px, 1.2fr) minmax(280px, 330px);
+  gap: 20px;
   align-items: start;
 }
 
@@ -81,7 +81,7 @@
   border: 1px solid #e7e7e7;
   border-radius: 8px;
   background: #ffffff;
-  min-height: 420px;
+  min-height: 400px;
   overflow: hidden;
 }
 
@@ -104,14 +104,14 @@
 }
 
 .pd-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 400;
-  line-height: 1.3;
-  margin-bottom: 5px;
+  line-height: 1.35;
+  margin-bottom: 8px;
 }
 
 .pd-rating {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .pd-meta-row {
@@ -151,7 +151,7 @@
 .pd-divider {
   border: 0;
   border-top: 1px solid var(--color-border);
-  margin: 15px 0;
+  margin: 14px 0;
 }
 
 .pd-price-block {
@@ -189,7 +189,7 @@
 
 .pd-description h3 {
   font-size: 16px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .pd-description p {
@@ -202,7 +202,7 @@
   width: 100%;
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  padding: 18px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-self: flex-start;
@@ -215,13 +215,13 @@
   display: flex;
   align-items: flex-start;
   color: var(--color-price);
-  margin-bottom: 15px;
+  margin-bottom: 16px;
 }
 
 .pd-delivery {
   font-size: 14px;
   line-height: 1.4;
-  margin-bottom: 15px;
+  margin-bottom: 14px;
 }
 
 .text-link {
@@ -237,7 +237,7 @@
 .pd-stock {
   font-size: 18px;
   font-weight: 400;
-  margin-bottom: 15px;
+  margin-bottom: 14px;
 }
 
 .pd-stock-updated {
@@ -273,7 +273,7 @@
 }
 
 .pd-qty {
-  margin-bottom: 15px;
+  margin-bottom: 14px;
   font-size: 14px;
 }
 
@@ -288,7 +288,7 @@
 
 .pd-btn-add {
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   border-radius: 20px;
   padding: 10px;
   background-color: #ffd814;
@@ -303,7 +303,7 @@
 
 .pd-btn-buy {
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   border-radius: 20px;
   padding: 10px;
   background-color: #ffa41c;
@@ -322,10 +322,11 @@
   align-items: center;
   gap: 5px;
   margin-top: 10px;
+  line-height: 1.45;
 }
 
 .pd-secure-spacing {
-  margin-top: 15px;
+  margin-top: 12px;
 }
 
 .pd-seller-info {
@@ -368,7 +369,7 @@
   background: #ffffff;
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  padding: 20px;
+  padding: 18px;
 }
 
 .pd-suggestions-section h3 {
@@ -419,7 +420,7 @@
   background: #ffffff;
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  padding: 20px;
+  padding: 18px;
 }
 
 .pd-reviews-section h3 {

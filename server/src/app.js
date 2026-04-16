@@ -16,9 +16,25 @@ const { initSocket } = require('./lib/socket');
 
 const app = express();
 
+const resolveCorsOrigins = () => {
+  const configured = process.env.CORS_ORIGIN || 'http://localhost:5173';
+  return configured
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+};
+
+const allowedOrigins = resolveCorsOrigins();
+
 // ── Middleware ────────────────────────────────────────────────────────
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
   credentials: true,
 }));
 app.use(express.json());

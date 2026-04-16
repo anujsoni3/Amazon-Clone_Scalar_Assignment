@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as api from '../../services/api';
 import Loader from '../../components/Loader/Loader';
-import { formatPrice } from '../../utils/price';
 import './Account.css';
 
 const Account = () => {
@@ -46,8 +45,14 @@ const Account = () => {
         api.getPaymentCards(),
       ]);
 
-      if (profileRes.data.success) setProfile(profileRes.data.data);
-      if (addressesRes.data.success) setAddresses(addressesRes.data.data);
+      if (profileRes.data.success) {
+        setProfile(profileRes.data.data);
+      }
+      if (addressesRes.data.success) {
+        setAddresses(addressesRes.data.data);
+      } else if (profileRes.data?.data?.addresses?.length) {
+        setAddresses(profileRes.data.data.addresses);
+      }
       if (cardsRes.data.success) setCards(cardsRes.data.data);
     } catch (err) {
       console.error('Error fetching data', err);
@@ -144,6 +149,11 @@ const Account = () => {
     }
   };
 
+  const maskCard = (number) => {
+    const digits = String(number || '').replace(/\D/g, '');
+    return `•••• •••• •••• ${digits.slice(-4) || '1111'}`;
+  };
+
   if (loading) return <Loader fullPage />;
 
   return (
@@ -161,7 +171,7 @@ const Account = () => {
               className={`account-nav-item ${activeTab === 'profile' ? 'active' : ''}`}
               onClick={() => setActiveTab('profile')}
             >
-              Profile & Settings
+              Your Account
             </button>
             <button
               className={`account-nav-item ${activeTab === 'addresses' ? 'active' : ''}`}
@@ -175,25 +185,34 @@ const Account = () => {
             >
               Payment Methods
             </button>
-            <button
-              className={`account-nav-item ${activeTab === 'orders' ? 'active' : ''}`}
-              onClick={() => setActiveTab('orders')}
-            >
-              <Link to="/orders/history">Your Orders</Link>
-            </button>
-            <button
-              className={`account-nav-item ${activeTab === 'wishlist' ? 'active' : ''}`}
-              onClick={() => setActiveTab('wishlist')}
-            >
-              <Link to="/wishlist">Your Wishlist</Link>
-            </button>
+            <Link to="/orders/history" className="account-nav-item nav-link">
+              Returns & Orders
+            </Link>
+            <Link to="/wishlist" className="account-nav-item nav-link">
+              Your Wishlist
+            </Link>
           </nav>
         </div>
 
         <div className="account-content">
           {activeTab === 'profile' && (
             <section className="account-section">
-              <h2>Account Settings</h2>
+              <h2>Your Account</h2>
+              <div className="account-shortcuts">
+                <Link to="/orders/history" className="account-shortcut-card">
+                  <h4>Your Orders</h4>
+                  <p>Track, return, or buy things again</p>
+                </Link>
+                <Link to="/wishlist" className="account-shortcut-card">
+                  <h4>Your Wishlist</h4>
+                  <p>View and manage saved items</p>
+                </Link>
+                <button className="account-shortcut-card" onClick={() => setActiveTab('addresses')}>
+                  <h4>Your Addresses</h4>
+                  <p>{addresses.length > 0 ? `${addresses.length} saved` : 'Add your delivery address'}</p>
+                </button>
+              </div>
+
               <div className="profile-info-card">
                 <h3>Personal Information</h3>
                 <div className="info-row">
@@ -215,7 +234,7 @@ const Account = () => {
           {activeTab === 'addresses' && (
             <section className="account-section">
               <div className="section-header">
-                <h2>Your Addresses</h2>
+                <h2>Your Addresses ({addresses.length})</h2>
                 <button
                   className="add-btn"
                   onClick={() => {
@@ -302,7 +321,7 @@ const Account = () => {
 
               <div className="addresses-list">
                 {addresses.length === 0 ? (
-                  <p className="empty-state">No addresses saved. Add one to get started!</p>
+                  <p className="empty-state">No addresses saved yet. Add one to start faster checkout.</p>
                 ) : (
                   addresses.map((addr) => (
                     <div key={addr.id} className={`address-card ${addr.isDefault ? 'default' : ''}`}>
@@ -348,6 +367,19 @@ const Account = () => {
                 >
                   {showCardForm ? '✕ Cancel' : '+ Add New Card'}
                 </button>
+              </div>
+
+              <div className="static-card-section">
+                <h3>Your Preferred Payment Method</h3>
+                <div className="static-card-display">
+                  <div className="card-chip">💳</div>
+                  <div className="card-details">
+                    <p className="card-number">•••• •••• •••• 1111</p>
+                    <p className="cardholder">ANUJ KUMAR</p>
+                    <p className="expiry">12/26</p>
+                  </div>
+                  <span className="default-badge">Static Default</span>
+                </div>
               </div>
 
               {showCardForm && (
@@ -408,7 +440,7 @@ const Account = () => {
                       <div className="card-display">
                         <div className="card-chip">💳</div>
                         <div className="card-details">
-                          <p className="card-number">•••• •••• •••• {card.cardNumber.slice(-4)}</p>
+                          <p className="card-number">{maskCard(card.cardNumber)}</p>
                           <p className="cardholder">{card.cardholderName}</p>
                           <p className="expiry">{card.expiryMonth}/{card.expiryYear}</p>
                         </div>

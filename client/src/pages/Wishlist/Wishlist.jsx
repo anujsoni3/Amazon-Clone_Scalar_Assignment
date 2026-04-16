@@ -96,8 +96,14 @@ const Wishlist = () => {
   return (
     <div className="wishlist-page">
       <header className="wishlist-header">
-        <h1>Your Wish List</h1>
-        <p>{items.length} item{items.length !== 1 ? 's' : ''}</p>
+        <div>
+          <h1>Your Wish List</h1>
+          <p>{items.length} item{items.length !== 1 ? 's' : ''}</p>
+        </div>
+        <div className="wishlist-header-actions">
+          <Link to="/orders/history" className="wishlist-header-link">Returns & Orders</Link>
+          <Link to="/account" className="wishlist-header-link">Your Account</Link>
+        </div>
       </header>
 
       {items.length === 0 ? (

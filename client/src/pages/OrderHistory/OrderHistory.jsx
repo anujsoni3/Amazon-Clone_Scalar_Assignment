@@ -50,6 +50,11 @@ const OrderHistory = () => {
     <div className="order-hist-page">
       <div className="order-hist-header">
         <h1>Your Orders</h1>
+        <div className="order-hist-tabs">
+          <span className="order-hist-tab active">Orders</span>
+          <Link to="/wishlist" className="order-hist-tab">Buy Again</Link>
+          <Link to="/account" className="order-hist-tab">Your Account</Link>
+        </div>
       </div>
 
       {orders.length === 0 ? (
@@ -73,7 +78,7 @@ const OrderHistory = () => {
                   </div>
                   <div className="oc-info-block">
                     <span className="oc-label">DISPATCH TO</span>
-                    <span className="text-link">Anuj Soni</span>
+                    <span className="text-link">{order.shippingAddress?.name || 'Anuj Kumar'}</span>
                   </div>
                 </div>
                 <div className="oc-header-right">
@@ -86,6 +91,9 @@ const OrderHistory = () => {
                 <h3 className={`oc-status oc-status-${statusMap[order.status]?.tone || 'neutral'}`}>
                   {statusMap[order.status]?.label || 'Processing'}
                 </h3>
+                <p className="oc-substatus">
+                  Shipping to {order.shippingAddress?.city || 'your saved address'}, {order.shippingAddress?.state || 'India'}
+                </p>
                 {order.items.map(item => (
                   <div key={item.id} className="oc-item">
                     <img

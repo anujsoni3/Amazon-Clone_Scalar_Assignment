@@ -1,77 +1,193 @@
-# Amazon Clone Platform
+# Amazon Clone Fullstack Project
 
-This is a full-stack e-commerce web application designed to visually replicate Amazon's core storefront with high precision. It handles the complete ordering flow—from product viewing to cart manipulation to checkout procedures—built entirely around modern conventions for a scalable backend and single-page frontend.
+A production-style Amazon-inspired ecommerce application built for the Scalar SDE Intern Fullstack Assignment.
 
-Built for the **Scalar SDE Intern Fullstack Assignment**.
+## 1. Project Summary
 
-## Tech Stack Overview
+This project implements a realistic ecommerce flow with a strong Amazon-like UI and robust backend behavior:
 
-- **Frontend:** React.js (via Vite)
-- **State Management:** React Context API (Cart Provider globally handling quantities/syncing)
-- **Styling:** Custom CSS implementing exact Amazon UI Color Palettes (no generic component libraries used to guarantee visual authenticity).
-- **Backend:** Node.js + Express.js
-- **Database:** PostgreSQL (Neon Serverless PostgreSQL)
-- **ORM:** Prisma
+- Product browsing, filtering, and search
+- Product detail and buy box flow
+- Cart management and checkout
+- Order placement with idempotency and stock protection
+- Order history and wishlist
+- Account management (profile, addresses, payment methods)
+- Order confirmation email notifications
 
-## Implementation Features
+## 2. Assignment Coverage
 
-### 1. Product Listing & Filtering
-Implemented a dynamic responsive grid loaded with seeded PostgreSQL data. Includes functional sidebar categories (Electronics, Clothing, etc.), sorting functions (Price High/Low, Rated), and search. Includes Amazon's standard truncated titles and immediate "Add to Cart" functionality directly from cards.
+### Mandatory scope
 
-### 2. Product Detail Page
-A highly authentic 3-column layout matching Amazon. Features thumbnail gallery swapping on hover, rich product descriptions, and a strictly defined "Buy Box" pane that disables buttons if an item stock equals zero.
+- Amazon-like UI across main storefront journeys: Implemented
+- Product listing/detail/cart/checkout/order history: Implemented
+- Seeded sample catalog with multiple categories: Implemented
+- Custom database schema design: Implemented with Prisma models and relationships
 
-### 3. Smart Shopping Cart
-Centralized tracking that dynamically handles Quantity mutations. Instantly updates the Navbar tracker without page-refresh overhead. It includes live subtotal calculations based on Free Shipping triggers (> ₹499 carts).
+### Good to Have (Bonus)
 
-### 4. Checkout & Order Generation
-A multi-step checkout form grabbing user delivery credentials. Processes into the database generating a UUID for the order, and creates snapshots of product prices at the exact time of purchase to ensure historical integrity within the Relational Database.
+- Responsive design (mobile/tablet/desktop): Implemented
+- User authentication: Intentionally not implemented (assignment says no login required)
+- Order history: Implemented
+- Wishlist: Implemented
+- Email notification on order placement: Implemented
 
-## Core Database Schema Choices
+## 3. Tech Stack
 
-The database is normalized across **9 core tables/models**:
-- `users`: Simulates the authentication (Defaulted to `Anuj Soni`).
-- `categories`: Contains slugs to categorize items.
-- `products`: Links to `categories`. Holds current price, ratings, descriptions and stock status.
-- `product_images`: 1-to-many relationship with products for gallery views.
-- `cart_items`: Holds active user carts.
-- `orders`: Stores the shipping address as JSON and global subtotal/status. Primary Key using UUIDs to prevent enumeration.
-- `order_items`: The critical relational mapping. Stores a **snapshot** of the product price so past orders aren't retroactively changed if a product is put on sale later.
-- `wishlists`: Stores products saved for later by user.
-- `reviews`: Stores product ratings/reviews and verified purchase metadata.
+- Frontend: React + Vite + React Router + Axios
+- Backend: Node.js + Express
+- Database: PostgreSQL + Prisma ORM
+- Real-time events: Socket.io
+- Email: Nodemailer (SMTP)
 
-## Setup Instructions
+## 4. Repository Structure
 
-### Prerequisites
-- Node.js `v20+`
-- A PostgreSQL Database (The local environment is currently pointing to a cloud-hosted Neon database)
+- client: React frontend app
+- server: Express API, Prisma schema, seed logic
+- docs: project diagrams and screenshot placeholders
 
-### Starting the Backend
-1. Open a terminal and navigate to the server root:
-   ```bash
-   cd server
-   ```
-2. Install dependencies and start the server:
-   ```bash
-   npm install
-   node src/app.js
-   ```
-   *The server runs on `localhost:5000` by default. It must be running for the frontend to receive product seeds.*
+## 5. Architecture Diagram
 
-### Starting the Frontend
-1. Open a new, separate terminal and navigate to the client root:
-   ```bash
-   cd client
-   ```
-2. Install dependencies and start the Vite frontend:
-   ```bash
-   npm install
-   npm run dev
-   ```
-3. Open your browser to the local URL provided by Vite (e.g. `http://localhost:5173`).
+```mermaid
+flowchart LR
+  U[User Browser] --> FE[React Frontend]
+  FE -->|REST API| API[Express Backend]
+  API --> DB[(PostgreSQL)]
+  API --> SMTP[SMTP Provider]
+  API --> WS[Socket.io Events]
+  WS --> FE
+```
 
-## Notes & Assumptions
+## 6. Order Flow Diagram
 
-- Authentication is intentionally simplified to a seeded default user for assignment scope.
-- Email notifications are not implemented (bonus feature).
-- For local development, run backend and frontend separately as documented above.
+```mermaid
+flowchart TD
+  A[User confirms checkout] --> B[Validate shipping payload]
+  B --> C[Read cart in transaction]
+  C --> D[Check inventory and decrement stock]
+  D --> E[Create order and order_items snapshot]
+  E --> F[Clear cart]
+  F --> G[Emit realtime events]
+  G --> H[Trigger order email]
+  H --> I[Return success response]
+```
+
+## 7. Database Design (ER Summary)
+
+```mermaid
+erDiagram
+  User ||--o{ CartItem : has
+  User ||--o{ Order : places
+  User ||--o{ Wishlist : saves
+  User ||--o{ Review : writes
+  User ||--o{ Address : owns
+  User ||--o{ PaymentCard : owns
+
+  Category ||--o{ Product : groups
+  Product ||--o{ ProductImage : has
+  Product ||--o{ CartItem : appears_in
+  Product ||--o{ OrderItem : sold_as
+  Product ||--o{ Wishlist : saved_as
+  Product ||--o{ Review : reviewed_as
+
+  Order ||--o{ OrderItem : contains
+```
+
+Key schema choices:
+
+- Order items store unit price snapshots for historical integrity.
+- Shipping address is persisted as JSON on orders.
+- Address and payment models support account realism.
+
+## 8. Screenshots
+
+Add project screenshots to docs/screenshots using these names:
+
+- home.png
+- product-listing.png
+- product-detail.png
+- cart.png
+- checkout.png
+- account.png
+- wishlist.png
+- orders.png
+- email-confirmation.png
+
+A quick placeholder guide exists in docs/screenshots/README.md.
+
+## 9. Local Setup
+
+### Backend
+
+```bash
+cd server
+npm install
+npm run db:seed
+npm run dev
+```
+
+### Frontend
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+## 10. Environment Variables
+
+### server/.env
+
+- DATABASE_URL
+- DIRECT_URL
+- PORT
+- CORS_ORIGIN
+- NODE_ENV
+- SMTP_HOST
+- SMTP_PORT
+- SMTP_SECURE
+- SMTP_USER
+- SMTP_PASS
+- MAIL_FROM
+
+### client/.env
+
+- VITE_API_URL
+
+## 11. Render Deployment Guide
+
+You can deploy using the included blueprint file:
+
+- render.yaml
+
+### API service (Render Web Service)
+
+- Root Directory: server
+- Build Command: npm install
+- Start Command: npm start
+- Environment: Node
+- Required env vars: DATABASE_URL, DIRECT_URL, NODE_ENV, CORS_ORIGIN
+- Optional env vars: SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS, MAIL_FROM
+
+### Frontend service (Render Static Site)
+
+- Root Directory: client
+- Build Command: npm install && npm run build
+- Publish Directory: dist
+- Required env var: VITE_API_URL set to your API URL with /api suffix
+
+Example:
+
+- VITE_API_URL=<https://your-api-name.onrender.com/api>
+
+## 12. Submission Notes and Assumptions
+
+- The assignment explicitly states that login is not required, so a default seeded user is used.
+- Redis was removed to keep runtime simple and portable for deployment.
+- Email sending is production-ready when SMTP credentials are configured.
+
+## 13. Additional Docs
+
+- Frontend docs: client/README.md
+- Backend docs: server/README.md
+- Formal project report: docs/REPORT.md
+- Screenshot guide and checklist: docs/screenshots/README.md

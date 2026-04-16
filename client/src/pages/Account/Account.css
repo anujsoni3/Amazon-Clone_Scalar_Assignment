@@ -1,534 +1,386 @@
 .account-page {
   background-color: #eaeded;
-  min-height: calc(100vh - 240px);
-  padding: 20px;
+  min-height: calc(100vh - 220px);
+  padding: 24px 16px;
 }
 
 .account-container {
-  display: flex;
-  max-width: 1500px;
+  max-width: 1320px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: 280px 1fr;
   gap: 20px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
 }
 
-/* Sidebar */
 .account-sidebar {
-  width: 250px;
-  background-color: #f8f9f9;
-  padding: 20px;
-  border-right: 1px solid #e0e0e0;
-  flex-shrink: 0;
+  background: #ffffff;
+  border: 1px solid #d5d9d9;
+  border-radius: 10px;
+  padding: 16px;
+  height: fit-content;
 }
 
 .account-profile-card {
-  background-color: white;
-  padding: 16px;
-  border-radius: 4px;
-  border: 1px solid #d5d9d9;
-  margin-bottom: 20px;
+  border: 1px solid #eaeded;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 16px;
+  background: #f8fafa;
 }
 
 .account-profile-card h3 {
-  margin: 0 0 8px 0;
+  margin: 0 0 6px;
   font-size: 18px;
   color: #0f1111;
-  font-weight: 600;
 }
 
 .account-profile-card p {
-  margin: 4px 0;
+  margin: 3px 0;
   font-size: 13px;
   color: #565959;
+  overflow-wrap: anywhere;
 }
 
 .account-nav {
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
 .account-nav-item {
   all: unset;
-  padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
+  display: block;
+  padding: 12px 10px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
   color: #0f1111;
-  text-align: left;
-  transition: background-color 0.2s;
 }
 
 .account-nav-item:hover {
-  background-color: #f0f2f2;
+  background: #f3f3f3;
 }
 
 .account-nav-item.active {
-  background-color: #e7f3f7;
-  border-left: 3px solid #007185;
-  padding-left: 13px;
+  background: #e9f3f8;
   font-weight: 600;
+  color: #0c5460;
 }
 
-.account-nav-item a {
-  color: inherit;
+.account-nav-item.nav-link {
   text-decoration: none;
 }
 
-/* Content */
 .account-content {
-  flex: 1;
-  padding: 30px;
-  overflow-y: auto;
-  max-height: calc(100vh - 240px);
-}
-
-.account-section {
-  margin-bottom: 40px;
+  background: #ffffff;
+  border: 1px solid #d5d9d9;
+  border-radius: 10px;
+  padding: 24px;
 }
 
 .account-section h2 {
-  font-size: 24px;
+  margin: 0 0 18px;
+  font-size: 28px;
+  font-weight: 400;
+}
+
+.account-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.account-shortcut-card {
+  border: 1px solid #d5d9d9;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 14px;
+  text-decoration: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-shortcut-card h4 {
+  margin: 0 0 6px;
+  font-size: 17px;
   color: #0f1111;
-  margin: 0 0 20px 0;
-  border-bottom: 2px solid #ffd814;
-  padding-bottom: 12px;
-  font-weight: 600;
+}
+
+.account-shortcut-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #565959;
+}
+
+.account-shortcut-card:hover {
+  box-shadow: 0 2px 10px rgba(15, 17, 17, 0.1);
+}
+
+.profile-info-card,
+.address-form,
+.card-form {
+  border: 1px solid #d5d9d9;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 16px;
+}
+
+.profile-info-card h3 {
+  margin: 0 0 10px;
+}
+
+.info-row {
+  display: flex;
+  border-top: 1px solid #eaeded;
+  padding: 10px 0;
+}
+
+.info-row:first-of-type {
+  border-top: none;
+}
+
+.label {
+  width: 130px;
+  color: #565959;
+  font-size: 14px;
+}
+
+.value {
+  flex: 1;
+  font-size: 14px;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .section-header h2 {
   margin: 0;
 }
 
-.add-btn {
-  background-color: #ffd814;
-  border: 1px solid #fcd200;
-  color: #0f1111;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
+.add-btn,
+.submit-btn,
+.set-default-btn,
+.edit-btn,
+.delete-btn {
+  border-radius: 999px;
+  font-size: 13px;
+  padding: 8px 14px;
   cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.add-btn:hover {
-  background-color: #f7ca00;
-}
-
-/* Profile Info Card */
-.profile-info-card {
-  background-color: #f8f9f9;
-  padding: 20px;
-  border-radius: 4px;
-  border: 1px solid #d5d9d9;
-}
-
-.profile-info-card h3 {
-  margin: 0 0 16px 0;
-  font-size: 16px;
+.add-btn,
+.set-default-btn {
+  border: 1px solid #fcd200;
+  background: #ffd814;
   color: #0f1111;
-  font-weight: 600;
 }
 
-.info-row {
-  display: flex;
-  padding: 12px 0;
-  border-bottom: 1px solid #e0e0e0;
+.add-btn:hover,
+.set-default-btn:hover {
+  background: #f7ca00;
 }
 
-.info-row:last-child {
-  border-bottom: none;
-}
-
-.info-row .label {
-  flex: 0 0 150px;
-  color: #565959;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.info-row .value {
-  flex: 1;
-  color: #0f1111;
-  font-size: 14px;
-}
-
-/* Forms */
 .address-form,
 .card-form {
-  background-color: #f8f9f9;
-  padding: 20px;
-  border-radius: 4px;
-  border: 1px solid #d5d9d9;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .address-form input,
-.card-form input,
-.address-form select {
+.card-form input {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #d5d9d9;
-  border-radius: 4px;
-  font-size: 13px;
-  margin-bottom: 12px;
-  font-family: inherit;
   box-sizing: border-box;
+  border: 1px solid #a6a6a6;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
 }
 
 .address-form input:focus,
-.card-form input:focus,
-.address-form select:focus {
+.card-form input:focus {
   outline: none;
-  border-color: #0f1111;
-  box-shadow: 0 0 0 3px rgba(15, 17, 17, 0.1);
+  border-color: #007185;
+  box-shadow: 0 0 0 3px rgba(0, 113, 133, 0.15);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.form-row.three {
-  grid-template-columns: 1fr 1fr 1fr;
-}
-
-.form-row input {
-  margin-bottom: 12px;
-}
-
-.full-width {
-  grid-column: 1 / -1 !important;
+  gap: 10px;
 }
 
 .submit-btn {
-  background-color: #ff9900;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
   width: 100%;
-  transition: background-color 0.2s;
+  border: 1px solid #ffd814;
+  background: #ffd814;
+  color: #0f1111;
+  font-weight: 600;
 }
 
 .submit-btn:hover {
-  background-color: #f7951a;
+  background: #f7ca00;
 }
 
-/* Address Cards */
-.addresses-list {
+.addresses-list,
+.cards-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  gap: 14px;
 }
 
 .address-card {
-  background-color: white;
   border: 1px solid #d5d9d9;
-  border-radius: 4px;
-  padding: 16px;
+  border-radius: 8px;
+  background: #fff;
+  padding: 14px;
   position: relative;
-  transition: box-shadow 0.2s;
-}
-
-.address-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .address-card.default {
-  border-color: #ffd814;
-  background-color: #fffaed;
+  background: #fffbf0;
+  border-color: #f0d98b;
 }
 
 .default-badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background-color: #ffd814;
-  color: #0f1111;
-  padding: 4px 8px;
-  border-radius: 3px;
+  top: 10px;
+  right: 10px;
   font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #ffd814;
+  color: #0f1111;
   font-weight: 700;
 }
 
 .address-card h4 {
-  margin: 0 0 8px 0;
-  font-size: 16px;
-  color: #0f1111;
-  font-weight: 600;
+  margin: 0 0 8px;
 }
 
 .address-card p {
   margin: 4px 0;
-  font-size: 13px;
   color: #565959;
-  line-height: 1.5;
+  font-size: 13px;
 }
 
-.phone-label {
-  margin-top: 8px !important;
-  font-weight: 600;
-}
-
-.address-actions {
+.address-actions,
+.card-actions {
   display: flex;
   gap: 8px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #e0e0e0;
-}
-
-.edit-btn,
-.delete-btn,
-.set-default-btn {
-  flex: 1;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid #d5d9d9;
-  transition: all 0.2s;
+  margin-top: 10px;
 }
 
 .edit-btn {
-  background-color: white;
-  color: #0f1111;
-}
-
-.edit-btn:hover {
-  background-color: #f0f2f2;
+  border: 1px solid #d5d9d9;
+  background: #ffffff;
 }
 
 .delete-btn {
-  background-color: white;
-  color: #c45500;
-  border-color: #c45500;
+  border: 1px solid #d5d9d9;
+  background: #ffffff;
 }
 
+.edit-btn:hover,
 .delete-btn:hover {
-  background-color: #fef5f0;
+  background: #f7fafa;
 }
 
-.set-default-btn {
-  background-color: #ffd814;
-  border-color: #fcd200;
-  color: #0f1111;
-  flex: 1;
+.static-card-section {
+  margin-bottom: 16px;
 }
 
-.set-default-btn:hover {
-  background-color: #f7ca00;
+.static-card-section h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
 }
 
-/* Card Items */
-.cards-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
-}
-
+.static-card-display,
 .card-item {
-  background: linear-gradient(135deg, #0f1111 0%, #2c2c2c 100%);
-  border-radius: 8px;
-  padding: 20px;
-  color: white;
+  background: linear-gradient(145deg, #111827, #1f2937);
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 16px;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 }
 
 .card-item.default {
-  border: 2px solid #ffd814;
-  box-shadow: 0 0 0 1px #ffd814;
+  outline: 2px solid #ffd814;
 }
 
 .card-display {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .card-chip {
-  font-size: 32px;
-  width: 60px;
-  height: 60px;
+  width: 54px;
+  height: 40px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-}
-
-.card-details {
-  flex: 1;
 }
 
 .card-number {
   margin: 0;
   font-size: 18px;
-  font-weight: 600;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 }
 
-.cardholder {
-  margin: 4px 0 0 0;
-  font-size: 13px;
-  opacity: 0.8;
-  text-transform: uppercase;
-}
-
+.cardholder,
 .expiry {
-  margin: 4px 0 0 0;
+  margin: 4px 0 0;
   font-size: 12px;
-  opacity: 0.8;
-}
-
-.card-item .default-badge {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background-color: #ffd814;
-  color: #0f1111;
-}
-
-.card-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.card-actions button {
-  flex: 1;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-  transition: all 0.2s;
-}
-
-.card-actions button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
+  opacity: 0.9;
 }
 
 .card-actions .delete-btn {
-  border-color: #ff6b6b;
-  background-color: rgba(255, 107, 107, 0.2);
-  color: #ff8c8c;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .card-actions .delete-btn:hover {
-  background-color: rgba(255, 107, 107, 0.3);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: #565959;
-  font-size: 16px;
-  background-color: #f8f9f9;
-  border-radius: 4px;
   border: 1px dashed #d5d9d9;
+  border-radius: 8px;
+  text-align: center;
+  padding: 18px;
+  color: #565959;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .account-container {
-    flex-direction: column;
-  }
-
-  .account-sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #e0e0e0;
-  }
-
-  .account-nav {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .account-nav-item {
-    border-bottom: none;
-    border-right: 1px solid #e0e0e0;
-    text-align: center;
-  }
-
-  .account-nav-item.active {
-    border-right: none;
-    border-bottom: 3px solid #007185;
-    border-left: none;
-    padding-left: 16px;
-  }
-
-  .addresses-list,
-  .cards-list {
     grid-template-columns: 1fr;
+  }
+
+  .account-shortcuts {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .account-content,
+  .account-sidebar {
+    padding: 14px;
   }
 
   .form-row {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 600px) {
-  .account-page {
-    padding: 10px;
-  }
-
-  .account-container {
-    border-radius: 0;
-  }
-
-  .account-sidebar {
-    padding: 16px;
-  }
-
-  .account-content {
-    padding: 16px;
-  }
-
-  .account-nav {
+  .addresses-list,
+  .cards-list {
     grid-template-columns: 1fr;
-  }
-
-  .account-nav-item {
-    border-right: none;
-    border-bottom: 1px solid #e0e0e0;
-  }
-
-  .account-nav-item.active {
-    border-bottom: 3px solid #007185;
-    border-left: 3px solid #007185;
-    padding-left: 13px;
-  }
-
-  .section-header {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .add-btn {
-    width: 100%;
   }
 }

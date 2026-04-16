@@ -2,6 +2,7 @@ const prisma = require('../lib/prisma');
 const { Prisma } = require('@prisma/client');
 const { clearCacheByPrefix } = require('../lib/queryCache');
 const { getIO } = require('../lib/socket');
+const { sendOrderConfirmationEmail } = require('../lib/mailer');
 
 const DEFAULT_USER_ID = 1;
 const SHIPPING_THRESHOLD = 499; // Free shipping above ₹499
@@ -164,6 +165,19 @@ const placeOrder = async (req, res, next) => {
       return newOrder;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 
+    prisma.user.findUnique({
+      where: { id: DEFAULT_USER_ID },
+      select: { email: true, name: true },
+    }).then((user) => {
+      return sendOrderConfirmationEmail({
+        to: user?.email,
+        customerName: user?.name,
+        order,
+      });
+    }).catch((error) => {
+      console.warn('Order confirmation email skipped:', error.message);
+    });
+
     clearCacheByPrefix('products:');
     emitOrderRealtimeEvents({
       order,
@@ -261,6 +275,19 @@ const placeBuyNowOrder = async (req, res, next) => {
 
       return newOrder;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+
+    prisma.user.findUnique({
+      where: { id: DEFAULT_USER_ID },
+      select: { email: true, name: true },
+    }).then((user) => {
+      return sendOrderConfirmationEmail({
+        to: user?.email,
+        customerName: user?.name,
+        order,
+      });
+    }).catch((error) => {
+      console.warn('Buy-now confirmation email skipped:', error.message);
+    });
 
     clearCacheByPrefix('products:');
     emitOrderRealtimeEvents({
