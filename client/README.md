@@ -1,18 +1,19 @@
 # Client Application
 
-## Overview
+React frontend for the Amazon Clone project.
 
-React frontend for the Amazon Clone assignment.
+## Live URL
 
-## Responsibilities
+- Frontend: https://amazon-clone-teal-xi.vercel.app
 
-- Amazon-like navigation, cards, and page layouts
-- Product listing and detail experience
+## Scope
+
+- Amazon-like navigation and page layouts
+- Product listing and product detail pages
 - Cart, checkout, wishlist, and account pages
-- Order history views
-- API integration via Axios
+- API integration using Axios
 
-## Scripts
+## Commands
 
 ```bash
 npm run dev
@@ -29,15 +30,45 @@ Create client/.env:
 VITE_API_URL=http://localhost:5000/api
 ```
 
-For Render:
+Production value:
 
 ```bash
-VITE_API_URL=https://your-api-name.onrender.com/api
+VITE_API_URL=https://amazon-clone-scalar-assignment.onrender.com/api
 ```
 
-## Deployment (Render Static Site)
+## Deployment
 
+- Platform: Vercel
 - Root Directory: client
-- Build Command: npm install && npm run build
-- Publish Directory: dist
-- Env Var: VITE_API_URL
+- Build Command: npm run build
+- Output Directory: dist
+
+## Client Screenshots
+
+### Home
+
+![Home](../docs/screenshots/home.png)
+
+### Product Listing
+
+![Product Listing](../docs/screenshots/product-listing.png)
+
+### Product Detail
+
+![Product Detail](../docs/screenshots/product-detail.png)
+
+### Cart
+
+![Cart](../docs/screenshots/cart.png)
+
+### Checkout
+
+![Checkout](../docs/screenshots/checkout.png)
+
+### Wishlist
+
+![Wishlist](../docs/screenshots/wishlist.png)
+
+### Orders
+
+![Orders](../docs/screenshots/orders.png)

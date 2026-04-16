@@ -1,17 +1,19 @@
 # Server Application
 
-## Overview
+Express API for the Amazon Clone project using Prisma and PostgreSQL.
 
-Express API for the Amazon Clone assignment with Prisma and PostgreSQL.
+## Live URL
+
+- Backend API: https://amazon-clone-scalar-assignment.onrender.com
 
 ## Responsibilities
 
 - Product, category, cart, order, wishlist, review, and account APIs
-- Seed pipeline with realistic catalog and order data
-- Idempotent order placement and stock-safe transactions
+- Seed pipeline for realistic catalog and order data
+- Idempotent order placement with stock-safe transactions
 - Order confirmation email dispatch via SMTP
 
-## Scripts
+## Commands
 
 ```bash
 npm run dev
@@ -42,14 +44,28 @@ Optional email:
 - SMTP_PASS
 - MAIL_FROM
 
-## API Health
+## Health Endpoint
 
 - GET /api/health
 
-## Deployment (Render Web Service)
+## Deployment
 
+- Platform: Render Web Service
 - Root Directory: server
-- Build Command: npm install
+- Build Command: npm install --include=dev && npx prisma@5.22.0 generate
 - Start Command: npm start
-- Add environment variables in Render dashboard
-- Set CORS_ORIGIN to both local and frontend URLs if needed, comma-separated
+- CORS_ORIGIN should include local and deployed frontend origins
+
+## Server-Related Screenshots
+
+### Order Confirmation Email
+
+![Order Confirmation Email](../docs/screenshots/email-confirmation.png)
+
+### Account Data Example
+
+![Account](../docs/screenshots/account.png)
+
+### Brainstorming and Architecture Notes
+
+![Brainstorming Notes](../docs/screenshots/brainstorm-ideas.png)
