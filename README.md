@@ -3,7 +3,7 @@
 A production-grade Amazon-inspired ecommerce platform built for the Scalar SDE Internship Fullstack Assignment. The application demonstrates comprehensive fullstack development practices including responsive UI, robust API design, transactional integrity, and cloud deployment.
 
 **🚀 Live Deployment:**
-- **Frontend:** [https://amazon-clone-teal-xi.vercel.app](https://amazon-clone-teal-xi.vercel.app)
+- **Frontend:** [https://amazon-clone-6kt32qqhn-anujsoni3s-projects.vercel.app/](https://amazon-clone-6kt32qqhn-anujsoni3s-projects.vercel.app/)
 - **Backend API:** [https://amazon-clone-scalar-assignment.onrender.com](https://amazon-clone-scalar-assignment.onrender.com)
 
 ## 1. Overview
